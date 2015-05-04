@@ -1,8 +1,10 @@
-package za.co.pietermuller.playground.destructo;
+package za.co.pietermuller.playground.destructo.particlefilter;
 
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
 import org.apache.commons.math3.analysis.function.Gaussian;
+import za.co.pietermuller.playground.destructo.RobotDescription;
+import za.co.pietermuller.playground.destructo.WorldModel;
 
 public class RobotModel {
 

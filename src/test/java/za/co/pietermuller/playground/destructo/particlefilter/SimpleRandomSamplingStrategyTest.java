@@ -1,7 +1,9 @@
-package za.co.pietermuller.playground.destructo;
+package za.co.pietermuller.playground.destructo.particlefilter;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
+import za.co.pietermuller.playground.destructo.particlefilter.SimpleRandomSamplingStrategy;
+import za.co.pietermuller.playground.destructo.particlefilter.WeightedObject;
 
 import java.util.List;
 import java.util.Random;

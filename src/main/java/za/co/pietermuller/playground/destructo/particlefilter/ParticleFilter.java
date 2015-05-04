@@ -1,6 +1,7 @@
-package za.co.pietermuller.playground.destructo;
+package za.co.pietermuller.playground.destructo.particlefilter;
 
 import com.google.common.collect.ImmutableList;
+import za.co.pietermuller.playground.destructo.WorldModel;
 
 import java.util.List;
 

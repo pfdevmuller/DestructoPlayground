@@ -1,7 +1,11 @@
-package za.co.pietermuller.playground.destructo;
+package za.co.pietermuller.playground.destructo.particlefilter;
 
 import math.geom2d.Point2D;
 import org.junit.Test;
+import za.co.pietermuller.playground.destructo.RobotDescription;
+import za.co.pietermuller.playground.destructo.WorldModel;
+import za.co.pietermuller.playground.destructo.particlefilter.Measurement;
+import za.co.pietermuller.playground.destructo.particlefilter.RobotModel;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;

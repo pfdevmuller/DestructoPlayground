@@ -1,4 +1,4 @@
-package za.co.pietermuller.playground.destructo;
+package za.co.pietermuller.playground.destructo.particlefilter;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

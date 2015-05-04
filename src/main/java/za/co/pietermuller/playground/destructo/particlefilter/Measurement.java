@@ -1,4 +1,4 @@
-package za.co.pietermuller.playground.destructo;
+package za.co.pietermuller.playground.destructo.particlefilter;
 
 public class Measurement {
 
