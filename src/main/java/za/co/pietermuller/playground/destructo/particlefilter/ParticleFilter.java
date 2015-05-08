@@ -27,7 +27,7 @@ public class ParticleFilter {
     public void measurementUpdate(Measurement measurement) {
         ImmutableList.Builder<WeightedObject<RobotModel>> weightsBuilder = ImmutableList.builder();
         for (RobotModel particle: particles) {
-            double weight = particle.getMeasurementProbability(measurement, worldModel);
+            double weight = particle.getMeasurementProbability(measurement);
             weightsBuilder.add(new WeightedObject<RobotModel>(particle, weight));
         }
         particles = samplingStrategy.sampleFrom(weightsBuilder.build());

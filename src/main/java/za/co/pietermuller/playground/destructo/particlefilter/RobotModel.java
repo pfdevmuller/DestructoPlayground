@@ -6,16 +6,26 @@ import org.apache.commons.math3.analysis.function.Gaussian;
 import za.co.pietermuller.playground.destructo.RobotDescription;
 import za.co.pietermuller.playground.destructo.WorldModel;
 
+import java.util.Random;
+
 public class RobotModel {
 
     private final RobotDescription robotDescription;
     private Point2D position; // mm, cartesian
     private double orientation; // radians, anti-clockwise from positive x axis
+    private final WorldModel worldModel;
+    private final Random randomGenerator;
 
-    public RobotModel(RobotDescription robotDescription, Point2D position, double orientation) {
+    public RobotModel(RobotDescription robotDescription,
+                      Point2D position,
+                      double orientation,
+                      WorldModel worldModel,
+                      Random randomGenerator) {
         this.robotDescription = robotDescription;
         this.position = position;
         this.orientation = orientation;
+        this.worldModel = worldModel;
+        this.randomGenerator = randomGenerator;
     }
 
     public double getOrientation() {
@@ -27,6 +37,25 @@ public class RobotModel {
     }
 
     public void move(Movement movement) {
+        // update rotation:
+        double rotationNoise = randomGenerator.nextGaussian() * movement.getRotationNoise().radians();
+        this.orientation += movement.getRotation().radians() + rotationNoise;
+
+        // update position
+        double distanceNoise = randomGenerator.nextGaussian() * movement.getDistanceNoise();
+        double distanceToMove = movement.getDistance() + distanceNoise;
+
+        double x = position.x() + (Math.cos(orientation) * distanceToMove);
+        double y = position.y() + (Math.sin(orientation) * distanceToMove);
+
+        this.position = new Point2D(x, y);
+
+        if (!worldModel.containsPoint(position)) {
+            moveBackToBorder();
+        }
+    }
+
+    private void moveBackToBorder() {
         // TODO
     }
 
@@ -34,10 +63,9 @@ public class RobotModel {
      * Returns an unnormalized probability of the given measurement being taken for this robot model.
      *
      * @param measurement
-     * @param worldModel
      * @return
      */
-    public double getMeasurementProbability(Measurement measurement, WorldModel worldModel) {
+    public double getMeasurementProbability(Measurement measurement) {
         // TODO this assumes the sensor is looking along the same orientation as the robot
 
         LineSegment2D lineToWall = worldModel.getLineToNearestWall(position, orientation);
