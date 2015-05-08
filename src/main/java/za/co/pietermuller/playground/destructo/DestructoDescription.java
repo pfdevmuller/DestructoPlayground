@@ -6,4 +6,12 @@ public class DestructoDescription implements RobotDescription {
         return 140;
     }
 
+    public double getDriverWheelDiameter() {
+        return 43;
+    }
+
+    public double getAxleLength() {
+        return 93;
+    }
+
 }
