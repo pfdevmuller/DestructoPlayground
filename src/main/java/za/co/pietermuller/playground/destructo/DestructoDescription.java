@@ -3,15 +3,15 @@ package za.co.pietermuller.playground.destructo;
 public class DestructoDescription implements RobotDescription {
 
     public double getDistanceFromPositionToDistanceSensor() {
-        return 140;
+        return 0.140;
     }
 
     public double getDriverWheelDiameter() {
-        return 43;
+        return 0.043;
     }
 
     public double getAxleLength() {
-        return 93;
+        return 0.093;
     }
 
 }

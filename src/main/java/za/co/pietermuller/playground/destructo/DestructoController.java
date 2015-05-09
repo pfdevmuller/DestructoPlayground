@@ -15,9 +15,9 @@ public class DestructoController {
     public DestructoController(RobotDescription robotDescription) {
         this.robotDescription = robotDescription;
         leftDriverWheel = Motor.A;
-        leftDriverWheel.setSpeed(6);
-        rightDriverWheel = Motor.B;
-        rightDriverWheel.setSpeed(6);
+        leftDriverWheel.setSpeed(60);
+        rightDriverWheel = Motor.D;
+        rightDriverWheel.setSpeed(60);
         leftDriverWheel.synchronizeWith(new RegulatedMotor[]{ rightDriverWheel });
     }
 
@@ -31,8 +31,8 @@ public class DestructoController {
                 rotation.degrees() * (robotDescription.getAxleLength() / robotDescription.getDriverWheelDiameter()));
 
         leftDriverWheel.startSynchronization();
-        leftDriverWheel.rotate(-degreesToTurnWheels, true);
-        rightDriverWheel.rotate(degreesToTurnWheels, true);
+        leftDriverWheel.rotate(degreesToTurnWheels, true);
+        rightDriverWheel.rotate(-degreesToTurnWheels, true);
         leftDriverWheel.endSynchronization();
         leftDriverWheel.waitComplete();
         rightDriverWheel.waitComplete();
@@ -42,8 +42,8 @@ public class DestructoController {
         Rotation wheelRotation = radians(2 * meters / robotDescription.getDriverWheelDiameter());
 
         leftDriverWheel.startSynchronization();
-        leftDriverWheel.rotate((int) Math.round(wheelRotation.degrees()), true);
-        rightDriverWheel.rotate((int) Math.round(wheelRotation.degrees()), true);
+        leftDriverWheel.rotate(-(int) Math.round(wheelRotation.degrees()), true);
+        rightDriverWheel.rotate(-(int) Math.round(wheelRotation.degrees()), true);
         leftDriverWheel.endSynchronization();
         leftDriverWheel.waitComplete();
         rightDriverWheel.waitComplete();
