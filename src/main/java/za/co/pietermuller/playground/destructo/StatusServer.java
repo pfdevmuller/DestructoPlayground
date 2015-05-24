@@ -18,9 +18,13 @@ public class StatusServer extends NanoHTTPD {
         String msg = "<html><body><h1>Destructo Status Server</h1>\n";
         msg += "<p>Hello from Destructo. Method: " + method + ", uri: " + uri + "</p>";
         msg += "<p>Step Number: " + stepNumber + "</p>";
+        msg += "<p>Time on Server: " + System.currentTimeMillis() + "</p>";
         msg += "</body></html>\n";
 
-        return new NanoHTTPD.Response(msg);
+        Response response = new NanoHTTPD.Response(msg);
+        response.addHeader("Access-Control-Allow-Origin", "*");
+
+        return response;
     }
 
     public void incrementStepNumber() {
