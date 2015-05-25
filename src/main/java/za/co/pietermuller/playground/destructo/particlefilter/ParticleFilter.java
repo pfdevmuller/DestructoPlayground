@@ -1,6 +1,9 @@
 package za.co.pietermuller.playground.destructo.particlefilter;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import za.co.pietermuller.playground.destructo.Gaussian;
 import za.co.pietermuller.playground.destructo.Movement;
 
 import java.util.List;
@@ -36,5 +39,35 @@ public class ParticleFilter {
             weightsBuilder.add(new WeightedObject<RobotModel>(particle, weight));
         }
         particles = samplingStrategy.sampleFrom(weightsBuilder.build());
+    }
+
+    public Gaussian getDistributionAlongXAxis() {
+        return Gaussian.fromValues(Lists.transform(
+                particles, new Function<RobotModel, Double>() {
+                    public Double apply(RobotModel robotModel) {
+                        return robotModel.getPosition().x();
+                    }
+                }
+        ));
+    }
+
+    public Gaussian getDistributionAlongYAxis() {
+        return Gaussian.fromValues(Lists.transform(
+                particles, new Function<RobotModel, Double>() {
+                    public Double apply(RobotModel robotModel) {
+                        return robotModel.getPosition().y();
+                    }
+                }
+        ));
+    }
+
+    public Gaussian getDistributionOfOrientations() {
+        return Gaussian.fromValues(Lists.transform(
+                particles, new Function<RobotModel, Double>() {
+                    public Double apply(RobotModel robotModel) {
+                        return robotModel.getOrientation().radians();
+                    }
+                }
+        ));
     }
 }

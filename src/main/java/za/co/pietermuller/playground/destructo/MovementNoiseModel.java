@@ -2,26 +2,6 @@ package za.co.pietermuller.playground.destructo;
 
 public class MovementNoiseModel {
 
-    private class Gaussian {
-        private double mean;
-        private double sigma;
-
-        Gaussian(double mean, double sigma) {
-            this.mean = mean;
-            this.sigma = sigma;
-        }
-
-        /**
-         * Calculates the value of the guassian given scaling value with zero mean and unity sigma.
-         *
-         * @param scaler
-         * @return
-         */
-        double scaleGaussian(double scaler) {
-            return sigma * scaler + mean;
-        }
-    }
-
     private final Gaussian distanceNoise;
     private final Gaussian rotationNoise;
 

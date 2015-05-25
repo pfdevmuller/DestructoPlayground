@@ -1,6 +1,7 @@
 package za.co.pietermuller.playground.destructo.particlefilter;
 
 import com.google.common.collect.ImmutableList;
+import math.geom2d.Point2D;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -8,17 +9,24 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import za.co.pietermuller.playground.destructo.Gaussian;
 import za.co.pietermuller.playground.destructo.Movement;
+import za.co.pietermuller.playground.destructo.RobotDescription;
 import za.co.pietermuller.playground.destructo.WorldModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static za.co.pietermuller.playground.destructo.Rotation.radians;
 
 public class ParticleFilterTest {
 
@@ -33,6 +41,9 @@ public class ParticleFilterTest {
 
     @Mock
     NoisyMovementFactory mockNoisyMovementFactory;
+
+    @Mock
+    RobotDescription mockRobotDescription;
 
     @Before
     public void setUp() throws Exception {
@@ -103,6 +114,47 @@ public class ParticleFilterTest {
                                 weightedObjectWithRobotModel(model1),
                                 weightedObjectWithRobotModel(model2),
                                 weightedObjectWithRobotModel(model3))));
+    }
+
+    @Test
+    public void testGetDistributions() throws Exception {
+        // given
+        double[] xValues = new double[]{
+                4.867785633011822, 9.356311517808276, 4.908501318107904, 1.5619486939821103, 8.506688502573386
+        };
+
+        double[] yValues = new double[]{
+                38.05504312454009, 36.21562929573998, 33.756868099291346, 4.079361477149912, 8.9930272335837
+        };
+
+        double[] orientations = new double[]{
+                7.47703203958018, 17.070376094462187, 12.924520331791127, 6.226623883197327, 17.235718043457304
+        };
+
+        List<RobotModel> particles = new ArrayList<RobotModel>();
+        for (int i = 0; i < 5; i++) {
+            particles.add(new RobotModel(
+                    mockRobotDescription, new Point2D(xValues[i], yValues[i]), radians(orientations[i]), mockWorldModel));
+        }
+
+        when(mockRandomParticleSource.getRandomParticles())
+                .thenReturn(particles);
+
+        ParticleFilter particleFilter =
+                new ParticleFilter(mockRandomParticleSource, mockSamplingStrategy, mockNoisyMovementFactory);
+
+        // when
+        Gaussian xDistribution = particleFilter.getDistributionAlongXAxis();
+        Gaussian yDistribution = particleFilter.getDistributionAlongYAxis();
+        Gaussian orientationDistribution = particleFilter.getDistributionOfOrientations();
+
+        // then
+        assertThat(xDistribution.getMean(), is(closeTo(5.840, 0.001)));
+        assertThat(xDistribution.getSigma(), is(closeTo(3.146, 0.001)));
+        assertThat(yDistribution.getMean(), is(closeTo(24.219, 0.001)));
+        assertThat(yDistribution.getSigma(), is(closeTo(16.307, 0.001)));
+        assertThat(orientationDistribution.getMean(), is(closeTo(12.186, 0.001)));
+        assertThat(orientationDistribution.getSigma(), is(closeTo(5.186, 0.001)));
     }
 
     private Matcher<WeightedObject<RobotModel>> weightedObjectWithRobotModel(RobotModel robotModel) {
