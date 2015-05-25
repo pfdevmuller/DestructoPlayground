@@ -18,7 +18,7 @@ public class MovementNoiseModel {
          * @return
          */
         double scaleGaussian(double scaler) {
-            return sigma + scaler + mean;
+            return sigma * scaler + mean;
         }
     }
 
@@ -62,7 +62,7 @@ public class MovementNoiseModel {
      * @param gaussianRandom
      * @return rotation noise, in radians
      */
-    public Rotation scaleRotationGaussian(double gaussianRandom) {
-        return Rotation.radians(rotationNoise.scaleGaussian(gaussianRandom));
+    public double scaleRotationGaussian(double gaussianRandom) {
+        return rotationNoise.scaleGaussian(gaussianRandom);
     }
 }

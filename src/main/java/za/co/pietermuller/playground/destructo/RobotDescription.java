@@ -8,4 +8,13 @@ public interface RobotDescription {
 
     double getAxleLength();
 
+    /**
+     * Returns the model for the noise expected on a 1 meter forward movement.
+     */
+    MovementNoiseModel getDistanceMovementNoiseModel();
+
+    /**
+     * Returns the model for the noise expected on a 1 radian rotation.
+     */
+    MovementNoiseModel getRotationMovementNoiseModel();
 }
