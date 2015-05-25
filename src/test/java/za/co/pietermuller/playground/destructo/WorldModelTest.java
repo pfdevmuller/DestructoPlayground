@@ -1,5 +1,6 @@
 package za.co.pietermuller.playground.destructo;
 
+import math.geom2d.Box2D;
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
 import org.hamcrest.BaseMatcher;
@@ -8,6 +9,7 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static za.co.pietermuller.playground.destructo.Rotation.degrees;
 import static za.co.pietermuller.playground.destructo.Rotation.noRotation;
@@ -80,6 +82,25 @@ public class WorldModelTest {
         assertThat("point should be inside", worldModel.containsPoint(pointInside), is(true));
         assertThat("point should be outside", worldModel.containsPoint(pointOutside), is(false));
         assertThat("point on line should be outside", worldModel.containsPoint(pointOnLine), is(false));
+    }
+
+    @Test
+    public void testGetBoundingBox() throws Exception {
+        // given
+        WorldModel worldModel = WorldModel.builder()
+                .withBoundaryPoint(new Point2D(-40, 20))
+                .withBoundaryPoint(new Point2D(0, 60))
+                .withBoundaryPoint(new Point2D(80, -30))
+                .build();
+
+        // when
+        Box2D boundingBox = worldModel.getBoundingBox();
+
+        // then
+        assertThat(boundingBox.getMaxX(), is(equalTo(80.0)));
+        assertThat(boundingBox.getMinX(), is(equalTo(-40.0)));
+        assertThat(boundingBox.getMaxY(), is(equalTo(60.0)));
+        assertThat(boundingBox.getMinY(), is(equalTo(-30.0)));
     }
 
     private WorldModel getSimpleSquareWorld() {

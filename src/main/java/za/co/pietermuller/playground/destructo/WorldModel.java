@@ -1,6 +1,7 @@
 package za.co.pietermuller.playground.destructo;
 
 import com.google.common.collect.ImmutableList;
+import math.geom2d.Box2D;
 import math.geom2d.Point2D;
 import math.geom2d.domain.BoundaryPolyCurve2D;
 import math.geom2d.domain.ContinuousOrientedCurve2D;
@@ -59,6 +60,10 @@ public class WorldModel {
         return outerBoundary.isInside(point2D);
     }
 
+    public Box2D getBoundingBox() {
+        return outerBoundary.boundingBox();
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -79,7 +84,7 @@ public class WorldModel {
 
         /**
          * Adds a new line segment to the builder from the last point to the given point.
-         *
+         * <p/>
          * The first add will not create a line segment. On build, a line segment will be
          * added between the last and the first points, if they exist and are not the same.
          *
@@ -100,8 +105,7 @@ public class WorldModel {
 
         public WorldModel build() {
             if (firstPoint != null) {
-                if (firstPoint == lastPoint)
-                    throw new IllegalStateException("only one boundary point given");
+                if (firstPoint == lastPoint) { throw new IllegalStateException("only one boundary point given"); }
                 // Connect last point to first point
                 withBoundaryPoint(firstPoint);
             }
