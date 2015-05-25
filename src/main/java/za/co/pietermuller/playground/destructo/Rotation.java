@@ -1,5 +1,8 @@
 package za.co.pietermuller.playground.destructo;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+
 public class Rotation {
 
     private final double radians;
@@ -26,5 +29,25 @@ public class Rotation {
 
     public static Rotation noRotation() {
         return new Rotation(0.0);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
+        Rotation rotation = (Rotation) o;
+        return Objects.equal(radians, rotation.radians);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(radians);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("radians", radians)
+                .toString();
     }
 }

@@ -37,10 +37,10 @@ public class MovementNoiseModelTest {
         MovementNoiseModel movementNoiseModel = new MovementNoiseModel(0, 0, 100, 50);
 
         // when
-        Rotation noise = movementNoiseModel.scaleRotationGaussian(scalingRandom);
+        double noise = movementNoiseModel.scaleRotationGaussian(scalingRandom);
 
         // then
         double expectation = scalingRandom * sigma + mean;
-        assertThat(noise.radians(), is(equalTo(expectation)));
+        assertThat(noise, is(equalTo(expectation)));
     }
 }

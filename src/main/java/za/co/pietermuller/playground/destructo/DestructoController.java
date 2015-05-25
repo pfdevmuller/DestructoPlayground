@@ -2,7 +2,6 @@ package za.co.pietermuller.playground.destructo;
 
 import lejos.hardware.motor.Motor;
 import lejos.robotics.RegulatedMotor;
-import za.co.pietermuller.playground.destructo.particlefilter.Movement;
 
 import static za.co.pietermuller.playground.destructo.Rotation.radians;
 
