@@ -20,9 +20,15 @@ public class DestructoController {
         leftDriverWheel.synchronizeWith(new RegulatedMotor[]{ rightDriverWheel });
     }
 
+    /**
+     * Moves the robot.
+     * Forward movement is performed first, then rotation.
+     *
+     * @param movement
+     */
     public void move(Movement movement) {
-        rotate(movement.getRotation());
         forward(movement.getDistance());
+        rotate(movement.getRotation());
     }
 
     private void rotate(Rotation rotation) {

@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static za.co.pietermuller.playground.destructo.Rotation.degrees;
+import static za.co.pietermuller.playground.destructo.Rotation.noRotation;
 
 public class WorldModelTest {
 
@@ -21,19 +23,19 @@ public class WorldModelTest {
 
         // then
         assertThat(
-                worldModel.getLineToNearestWall(sourcePoint, 0),
+                worldModel.getLineToNearestWall(sourcePoint, noRotation()),
                 is(almostEqualTo(new LineSegment2D(10, 10, 100, 10))));
         assertThat(
-                worldModel.getLineToNearestWall(sourcePoint, 0.5 * Math.PI),
+                worldModel.getLineToNearestWall(sourcePoint, degrees(90)),
                 is(almostEqualTo(new LineSegment2D(10, 10, 10, 100))));
         assertThat(
-                worldModel.getLineToNearestWall(sourcePoint, 1.0 * Math.PI),
+                worldModel.getLineToNearestWall(sourcePoint, degrees(180)),
                 is(almostEqualTo(new LineSegment2D(10, 10, 0, 10))));
         assertThat(
-                worldModel.getLineToNearestWall(sourcePoint, 1.5 * Math.PI),
+                worldModel.getLineToNearestWall(sourcePoint, degrees(270)),
                 is(almostEqualTo(new LineSegment2D(10, 10, 10, 0))));
         assertThat(
-                worldModel.getLineToNearestWall(sourcePoint, 0.25 * Math.PI),
+                worldModel.getLineToNearestWall(sourcePoint, degrees(45)),
                 is(almostEqualTo(new LineSegment2D(10, 10, 100, 100))));
     }
 
@@ -46,7 +48,7 @@ public class WorldModelTest {
 
         // then
         assertThat(
-                worldModel.getLineToNearestWall(sourcePoint, 0),
+                worldModel.getLineToNearestWall(sourcePoint, noRotation()),
                 is(almostEqualTo(new LineSegment2D(10, 75, 25, 75))));
     }
 

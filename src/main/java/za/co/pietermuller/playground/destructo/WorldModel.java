@@ -24,14 +24,14 @@ public class WorldModel {
      * Returns the line from the given point to the closest wall, in the given direction.
      *
      * @param sourcePosition
-     * @param directionAngle in radians
+     * @param directionAngle
      * @return a line from the given point, in the given direction, to the closest wall
      * @throws IllegalArgumentException if the point is not within the outer boundary of the world
      */
-    public LineSegment2D getLineToNearestWall(final Point2D sourcePosition, double directionAngle) {
+    public LineSegment2D getLineToNearestWall(final Point2D sourcePosition, Rotation directionAngle) {
         checkArgument(containsPoint(sourcePosition), "sourcePosition is not within outer boundary of world");
 
-        Ray2D ray = new Ray2D(sourcePosition, directionAngle);
+        Ray2D ray = new Ray2D(sourcePosition, directionAngle.radians());
         List<Point2D> intersections = ImmutableList.copyOf(outerBoundary.intersections(ray));
 
         checkArgument(intersections.size() > 0, "no wall found in direction of search - boundary must be broken");

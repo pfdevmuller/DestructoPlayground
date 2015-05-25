@@ -3,32 +3,31 @@ package za.co.pietermuller.playground.destructo.particlefilter;
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
 import org.apache.commons.math3.analysis.function.Gaussian;
+import za.co.pietermuller.playground.destructo.Movement;
 import za.co.pietermuller.playground.destructo.RobotDescription;
+import za.co.pietermuller.playground.destructo.Rotation;
 import za.co.pietermuller.playground.destructo.WorldModel;
 
-import java.util.Random;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class RobotModel {
 
     private final RobotDescription robotDescription;
     private Point2D position; // mm, cartesian
-    private double orientation; // radians, anti-clockwise from positive x axis
+    private Rotation orientation; // anti-clockwise from positive x axis
     private final WorldModel worldModel;
-    private final Random randomGenerator;
 
     public RobotModel(RobotDescription robotDescription,
                       Point2D position,
-                      double orientation,
-                      WorldModel worldModel,
-                      Random randomGenerator) {
-        this.robotDescription = robotDescription;
-        this.position = position;
-        this.orientation = orientation;
-        this.worldModel = worldModel;
-        this.randomGenerator = randomGenerator;
+                      Rotation orientation,
+                      WorldModel worldModel) {
+        this.robotDescription = checkNotNull(robotDescription, "robotDescription is null!");
+        this.position = checkNotNull(position, "position is null!");
+        this.orientation = checkNotNull(orientation, "orientation is null!");
+        this.worldModel = checkNotNull(worldModel, "worldModel is null!");
     }
 
-    public double getOrientation() {
+    public Rotation getOrientation() {
         return orientation;
     }
 
@@ -36,23 +35,26 @@ public class RobotModel {
         return position;
     }
 
+    /**
+     * Updates the robot's position and orientation.
+     * Forward movement is performed first, then rotation.
+     *
+     * @param movement
+     */
     public void move(Movement movement) {
-        // update rotation:
-        double rotationNoise = randomGenerator.nextGaussian() * movement.getRotationNoise().radians();
-        this.orientation += movement.getRotation().radians() + rotationNoise;
-
         // update position
-        double distanceNoise = randomGenerator.nextGaussian() * movement.getDistanceNoise();
-        double distanceToMove = movement.getDistance() + distanceNoise;
-
-        double x = position.x() + (Math.cos(orientation) * distanceToMove);
-        double y = position.y() + (Math.sin(orientation) * distanceToMove);
+        double x = position.x() + (Math.cos(orientation.radians()) * movement.getDistance());
+        double y = position.y() + (Math.sin(orientation.radians()) * movement.getDistance());
 
         this.position = new Point2D(x, y);
 
         if (!worldModel.containsPoint(position)) {
             moveBackToBorder();
         }
+
+        // update rotation:
+        // TODO: Add() method for rotations
+        orientation = Rotation.radians(orientation.radians() + movement.getRotation().radians());
     }
 
     private void moveBackToBorder() {
