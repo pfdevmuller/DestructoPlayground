@@ -54,7 +54,8 @@ public class RobotModel {
 
         // update rotation:
         // TODO: Add() method for rotations
-        orientation = Rotation.radians(orientation.radians() + movement.getRotation().radians());
+        double newOrientationDegrees = orientation.degrees() + movement.getRotation().degrees();
+        orientation = Rotation.degrees(newOrientationDegrees % 360.0);
     }
 
     private void moveBackToBorder() {
