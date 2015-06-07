@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import za.co.pietermuller.playground.destructo.AngleDistribution;
 import za.co.pietermuller.playground.destructo.Gaussian;
 import za.co.pietermuller.playground.destructo.Movement;
 import za.co.pietermuller.playground.destructo.RobotDescription;
@@ -146,15 +147,15 @@ public class ParticleFilterTest {
         // when
         Gaussian xDistribution = particleFilter.getDistributionAlongXAxis();
         Gaussian yDistribution = particleFilter.getDistributionAlongYAxis();
-        Gaussian orientationDistribution = particleFilter.getDistributionOfOrientations();
+        AngleDistribution orientationDistribution = particleFilter.getDistributionOfOrientations();
 
         // then
         assertThat(xDistribution.getMean(), is(closeTo(5.840, 0.001)));
         assertThat(xDistribution.getSigma(), is(closeTo(3.146, 0.001)));
         assertThat(yDistribution.getMean(), is(closeTo(24.219, 0.001)));
         assertThat(yDistribution.getSigma(), is(closeTo(16.307, 0.001)));
-        assertThat(orientationDistribution.getMean(), is(closeTo(12.186, 0.001)));
-        assertThat(orientationDistribution.getSigma(), is(closeTo(5.186, 0.001)));
+        assertThat(orientationDistribution.getMean().radians(), is(closeTo(5.931386434064327, 0.001)));
+        assertThat(orientationDistribution.getConfidence(), is(closeTo(0.4374151485439101, 0.001)));
     }
 
     private Matcher<WeightedObject<RobotModel>> weightedObjectWithRobotModel(RobotModel robotModel) {
