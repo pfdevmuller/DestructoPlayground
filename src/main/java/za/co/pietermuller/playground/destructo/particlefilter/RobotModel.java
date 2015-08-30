@@ -1,5 +1,6 @@
 package za.co.pietermuller.playground.destructo.particlefilter;
 
+import com.google.common.base.MoreObjects;
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
 import org.apache.commons.math3.analysis.function.Gaussian;
@@ -48,18 +49,14 @@ public class RobotModel {
 
         this.position = new Point2D(x, y);
 
-        if (!worldModel.containsPoint(position)) {
-            moveBackToBorder();
-        }
-
         // update rotation:
         // TODO: Add() method for rotations
         double newOrientationDegrees = orientation.degrees() + movement.getRotation().degrees();
         orientation = Rotation.degrees(newOrientationDegrees % 360.0);
     }
 
-    private void moveBackToBorder() {
-        // TODO
+    public boolean isInsideWorldBorder() {
+        return worldModel.containsPoint(position);
     }
 
     /**
@@ -84,5 +81,19 @@ public class RobotModel {
                         .value(actualMeasurement);
 
         return measurementProbability;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("orientation", orientation)
+                .add("robotDescription", robotDescription)
+                .add("position", position)
+                .add("worldModel", worldModel)
+                .toString();
+    }
+
+    static RobotModel copyOf(RobotModel other) {
+        return new RobotModel(other.robotDescription, other.position, other.orientation, other.worldModel);
     }
 }

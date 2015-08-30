@@ -1,5 +1,7 @@
 package za.co.pietermuller.playground.destructo.particlefilter;
 
+import com.google.common.base.MoreObjects;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -23,5 +25,13 @@ public class WeightedObject<T> {
 
     public double getWeight() {
         return weight;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("object", object)
+                .add("weight", weight)
+                .toString();
     }
 }
