@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import sun.plugin.dom.exception.InvalidStateException;
 import za.co.pietermuller.playground.destructo.RobotDescription;
 import za.co.pietermuller.playground.destructo.WorldModel;
 
@@ -47,7 +46,7 @@ public class RandomParticleSourceTest {
                 .thenReturn(0.2) // particle 2 x
                 .thenReturn(0.8) // particle 2 y
                 .thenReturn(0.5) // particle 2 angle
-                .thenThrow(new InvalidStateException("Should not be called this many times."));
+                .thenThrow(new IllegalStateException("Should not be called this many times."));
 
         // when
         List<RobotModel> particles = randomParticleSource.getRandomParticles();
