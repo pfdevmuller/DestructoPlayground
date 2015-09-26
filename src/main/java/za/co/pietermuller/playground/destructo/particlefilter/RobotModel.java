@@ -50,9 +50,7 @@ public class RobotModel {
         this.position = new Point2D(x, y);
 
         // update rotation:
-        // TODO: Add() method for rotations
-        double newOrientationDegrees = orientation.degrees() + movement.getRotation().degrees();
-        orientation = Rotation.degrees(newOrientationDegrees % 360.0);
+        orientation = orientation.add(movement.getRotation()).normalize();
     }
 
     public boolean isInsideWorldBorder() {

@@ -27,4 +27,20 @@ public class RotationTest {
         // then
         assertThat(test.degrees(), is(closeTo(180.0, 0.001)));
     }
+
+    @Test
+    public void testAddition() throws Exception {
+        assertThat(Rotation.degrees(5.0).add(Rotation.degrees(10.0)), is(equalTo(Rotation.degrees(15.0))));
+        assertThat(Rotation.degrees(-5.0).add(Rotation.degrees(-10.0)), is(equalTo(Rotation.degrees(-15.0))));
+        assertThat(Rotation.degrees(5.0).add(Rotation.degrees(-10.0)), is(equalTo(Rotation.degrees(-5.0))));
+        assertThat(Rotation.degrees(270.0).add(Rotation.degrees(180.0)), is(equalTo(Rotation.degrees(450.0))));
+    }
+
+    @Test
+    public void testNormalize() throws Exception {
+        assertThat(Rotation.degrees(15.0).normalize(), is(equalTo(Rotation.degrees(15.0))));
+        assertThat(Rotation.degrees(-15.0).normalize(), is(equalTo(Rotation.degrees(345.0))));
+        assertThat(Rotation.degrees(450.0).normalize(), is(equalTo(Rotation.degrees(90.0))));
+        assertThat(Rotation.degrees(-450.0).normalize(), is(equalTo(Rotation.degrees(270.0))));
+    }
 }

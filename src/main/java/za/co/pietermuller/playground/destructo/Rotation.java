@@ -19,6 +19,29 @@ public class Rotation {
         return 180.0 * radians() / (Math.PI);
     }
 
+    /**
+     * Returns a new Rotation that is the sum of this and the given Rotation.
+     *
+     * @param other Rotation to combine with this one
+     * @return A new Rotation instance that is the sum of this and the other
+     */
+    public Rotation add(Rotation other) {
+        return Rotation.radians(this.radians() + other.radians());
+    }
+
+    /**
+     * Returns a new Rotation that is equal to this one in orientation, but in the range [0, 360] degrees.
+     *
+     * @return new Rotation that is the normalized version of this instance
+     */
+    public Rotation normalize() {
+        double newDegrees = this.degrees() % 360.0;
+        if (newDegrees < 0) {
+            newDegrees += 360.0;
+        }
+        return Rotation.degrees(newDegrees);
+    }
+
     public static Rotation degrees(double value) {
         return new Rotation(value / 180.0 * Math.PI);
     }
