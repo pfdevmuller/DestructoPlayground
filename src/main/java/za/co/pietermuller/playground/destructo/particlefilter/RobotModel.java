@@ -1,5 +1,6 @@
 package za.co.pietermuller.playground.destructo.particlefilter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
@@ -28,10 +29,12 @@ public class RobotModel {
         this.worldModel = checkNotNull(worldModel, "worldModel is null!");
     }
 
+    @JsonProperty("orientation")
     public Rotation getOrientation() {
         return orientation;
     }
 
+    @JsonProperty("position")
     public Point2D getPosition() {
         return position;
     }

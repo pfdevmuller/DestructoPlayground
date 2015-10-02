@@ -1,5 +1,6 @@
 package za.co.pietermuller.playground.destructo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.apache.commons.math3.stat.StatUtils;
@@ -16,10 +17,12 @@ public class Gaussian {
         this.sigma = sigma;
     }
 
+    @JsonProperty("mean")
     public double getMean() {
         return mean;
     }
 
+    @JsonProperty("sigma")
     public double getSigma() {
         return sigma;
     }

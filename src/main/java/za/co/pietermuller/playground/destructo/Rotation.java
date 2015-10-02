@@ -1,5 +1,6 @@
 package za.co.pietermuller.playground.destructo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
@@ -15,6 +16,7 @@ public class Rotation {
         return radians;
     }
 
+    @JsonProperty("degrees")
     public double degrees() {
         return 180.0 * radians() / (Math.PI);
     }

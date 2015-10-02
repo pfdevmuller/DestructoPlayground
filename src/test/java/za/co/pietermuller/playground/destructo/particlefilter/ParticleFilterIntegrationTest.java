@@ -31,7 +31,7 @@ public class ParticleFilterIntegrationTest {
     NoisyMovementFactory noisyMovementFactory = new NoisyMovementFactory(destructoDescription, random);
 
     @Test
-    public void testFilterConvergesOne() throws Exception {
+    public void testFilterConverges() throws Exception {
         // given
         RobotModel actualRobot = new RobotModel(
                 destructoDescription, new Point2D(90, 10), degrees(0), worldModel);

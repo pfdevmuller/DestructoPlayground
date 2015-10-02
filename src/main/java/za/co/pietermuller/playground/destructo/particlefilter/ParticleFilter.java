@@ -1,23 +1,37 @@
 package za.co.pietermuller.playground.destructo.particlefilter;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import math.geom2d.Point2D;
 import za.co.pietermuller.playground.destructo.AngleDistribution;
 import za.co.pietermuller.playground.destructo.Gaussian;
 import za.co.pietermuller.playground.destructo.Movement;
 import za.co.pietermuller.playground.destructo.Rotation;
+import za.co.pietermuller.playground.destructo.StatusServable;
 
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class ParticleFilter {
+public class ParticleFilter implements StatusServable {
+
+    private Optional<ObjectMapper> objectMapper;
 
     private final SamplingStrategy<RobotModel> samplingStrategy;
     private final NoisyMovementFactory noisyMovementFactory;
+
+    @JsonProperty("particles")
     private List<RobotModel> particles;
 
     public ParticleFilter(RandomParticleSource randomParticleSource,
@@ -27,6 +41,7 @@ public class ParticleFilter {
         this.particles = randomParticleSource.getRandomParticles();
         this.samplingStrategy = checkNotNull(samplingStrategy, "samplingStrategy is null!");
         this.noisyMovementFactory = checkNotNull(noisyMovementFactory, "noisyMovementFactory is null!");
+        this.objectMapper = Optional.absent();
     }
 
     public void movementUpdate(Movement noiselessMovement) {
@@ -59,6 +74,7 @@ public class ParticleFilter {
         particles = listBuilder.build();
     }
 
+    @JsonProperty("distributionAlongXAxis")
     public Gaussian getDistributionAlongXAxis() {
         return Gaussian.fromValues(Lists.transform(
                 particles, new Function<RobotModel, Double>() {
@@ -69,6 +85,7 @@ public class ParticleFilter {
         ));
     }
 
+    @JsonProperty("distributionAlongYAxis")
     public Gaussian getDistributionAlongYAxis() {
         return Gaussian.fromValues(Lists.transform(
                 particles, new Function<RobotModel, Double>() {
@@ -79,6 +96,7 @@ public class ParticleFilter {
         ));
     }
 
+    @JsonProperty("distributionOfOrientations")
     public AngleDistribution getDistributionOfOrientations() {
         return AngleDistribution.fromValues(Lists.transform(
                 particles, new Function<RobotModel, Rotation>() {
@@ -87,5 +105,33 @@ public class ParticleFilter {
                     }
                 }
         ));
+    }
+
+    @JsonProperty("numberOfParticles")
+    public int getNumberOfParticles() {
+        return particles.size();
+    }
+
+    private synchronized ObjectMapper getObjectMapper() {
+        if (objectMapper.isPresent()) {
+            return objectMapper.get();
+        } else {
+            ObjectMapper om = new ObjectMapper();
+            om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+            om.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PUBLIC_ONLY);
+            SimpleModule serializationModule = new SimpleModule("DestructoSerialize");
+            serializationModule.addSerializer(new CustomSerializers.Point2DSerializer(Point2D.class));
+            om.registerModule(serializationModule);
+            this.objectMapper = Optional.of(om);
+            return objectMapper.get();
+        }
+    }
+
+    public String getStatus() {
+        try {
+            return getObjectMapper().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw Throwables.propagate(e);
+        }
     }
 }
