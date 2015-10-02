@@ -18,32 +18,39 @@ public class RandomParticleSource {
     private final RobotDescription robotDescription;
     private final WorldModel worldModel;
     private final Random randomGenerator;
-    private int samples;
+
+    private Box2D worldBoundary;
+    private double xSpan;
+    private double ySpan;
 
     public RandomParticleSource(RobotDescription robotDescription,
                                 WorldModel worldModel,
-                                Random randomGenerator,
-                                int samples) {
+                                Random randomGenerator) {
         this.robotDescription = checkNotNull(robotDescription, "robotDescription is null!");
         this.worldModel = checkNotNull(worldModel, "worldModel is null!");
         this.randomGenerator = checkNotNull(randomGenerator, "randomGenerator is null!");
-        this.samples = samples;
+
+        worldBoundary = worldModel.getBoundingBox();
+        xSpan = worldBoundary.getMaxX() - worldBoundary.getMinX();
+        ySpan = worldBoundary.getMaxY() - worldBoundary.getMinY();
     }
 
-    public List<RobotModel> getRandomParticles() {
-        Box2D worldBoundary = worldModel.getBoundingBox();
-        double xSpan = worldBoundary.getMaxX() - worldBoundary.getMinX();
-        double ySpan = worldBoundary.getMaxY() - worldBoundary.getMinY();
-
-        List<RobotModel> particles = new ArrayList<RobotModel>(samples);
-        while (particles.size() < samples) {
+    private RobotModel getRandomParticle() {
+        Point2D point = null;
+        do {
             double x = worldBoundary.getMinX() + randomGenerator.nextDouble() * xSpan;
             double y = worldBoundary.getMinY() + randomGenerator.nextDouble() * ySpan;
-            Point2D point = new Point2D(x, y);
-            if (worldModel.containsPoint(point)) {
-                double angle = randomGenerator.nextDouble() * 360.0;
-                particles.add(new RobotModel(robotDescription, point, degrees(angle), worldModel));
-            }
+            point = new Point2D(x, y);
+        } while (!worldModel.containsPoint(point));
+
+        double angle = randomGenerator.nextDouble() * 360.0;
+        return new RobotModel(robotDescription, point, degrees(angle), worldModel);
+    }
+
+    public List<RobotModel> getRandomParticles(int samples) {
+        List<RobotModel> particles = new ArrayList<RobotModel>(samples);
+        while (particles.size() < samples) {
+            particles.add(getRandomParticle());
         }
         return ImmutableList.copyOf(particles);
     }

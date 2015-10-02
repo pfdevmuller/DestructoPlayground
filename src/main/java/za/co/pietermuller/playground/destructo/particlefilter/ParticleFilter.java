@@ -26,19 +26,23 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ParticleFilter implements StatusServable {
 
-    private Optional<ObjectMapper> objectMapper;
-
+    private final int numberOfSamples;
     private final SamplingStrategy<RobotModel> samplingStrategy;
     private final NoisyMovementFactory noisyMovementFactory;
+
+    private Optional<ObjectMapper> objectMapper;
+
 
     @JsonProperty("particles")
     private List<RobotModel> particles;
 
     public ParticleFilter(RandomParticleSource randomParticleSource,
+                          int numberOfSamples,
                           SamplingStrategy samplingStrategy,
                           NoisyMovementFactory noisyMovementFactory) {
         checkNotNull(randomParticleSource, "randomParticleSource is null!");
-        this.particles = randomParticleSource.getRandomParticles();
+        this.numberOfSamples = numberOfSamples;
+        this.particles = randomParticleSource.getRandomParticles(numberOfSamples);
         this.samplingStrategy = checkNotNull(samplingStrategy, "samplingStrategy is null!");
         this.noisyMovementFactory = checkNotNull(noisyMovementFactory, "noisyMovementFactory is null!");
         this.objectMapper = Optional.absent();

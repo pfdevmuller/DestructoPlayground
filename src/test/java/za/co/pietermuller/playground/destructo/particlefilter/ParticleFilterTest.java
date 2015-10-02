@@ -60,11 +60,12 @@ public class ParticleFilterTest {
         RobotModel model2 = mock(RobotModel.class);
         RobotModel model3 = mock(RobotModel.class);
 
-        when(mockRandomParticleSource.getRandomParticles())
+        when(mockRandomParticleSource.getRandomParticles(3))
                 .thenReturn(ImmutableList.of(model1, model2, model3));
 
         ParticleFilter particleFilter = new ParticleFilter(
                 mockRandomParticleSource,
+                3,
                 mockSamplingStrategy,
                 mockNoisyMovementFactory);
 
@@ -94,11 +95,12 @@ public class ParticleFilterTest {
         RobotModel model2 = mock(RobotModel.class);
         RobotModel model3 = mock(RobotModel.class);
 
-        when(mockRandomParticleSource.getRandomParticles())
+        when(mockRandomParticleSource.getRandomParticles(3))
                 .thenReturn(ImmutableList.of(model1, model2, model3));
 
         ParticleFilter particleFilter = new ParticleFilter(
                 mockRandomParticleSource,
+                3,
                 mockSamplingStrategy,
                 mockNoisyMovementFactory);
 
@@ -140,11 +142,11 @@ public class ParticleFilterTest {
                     mockRobotDescription, new Point2D(xValues[i], yValues[i]), radians(orientations[i]), mockWorldModel));
         }
 
-        when(mockRandomParticleSource.getRandomParticles())
+        when(mockRandomParticleSource.getRandomParticles(5))
                 .thenReturn(particles);
 
         ParticleFilter particleFilter =
-                new ParticleFilter(mockRandomParticleSource, mockSamplingStrategy, mockNoisyMovementFactory);
+                new ParticleFilter(mockRandomParticleSource, 5, mockSamplingStrategy, mockNoisyMovementFactory);
 
         // when
         Gaussian xDistribution = particleFilter.getDistributionAlongXAxis();
@@ -164,25 +166,25 @@ public class ParticleFilterTest {
     public void testGetStatus() throws Exception {
         // given
         RandomParticleSource mockParticleSource = mock(RandomParticleSource.class);
-        when(mockParticleSource.getRandomParticles()).thenReturn(
+        when(mockParticleSource.getRandomParticles(2)).thenReturn(
                 ImmutableList.of(
                         new RobotModel(mockRobotDescription, new Point2D(1, 2), degrees(45), mockWorldModel),
                         new RobotModel(mockRobotDescription, new Point2D(3, 4), degrees(135), mockWorldModel))
         );
 
         ParticleFilter particleFilter =
-                new ParticleFilter(mockParticleSource, mockSamplingStrategy, mockNoisyMovementFactory);
+                new ParticleFilter(mockParticleSource, 2, mockSamplingStrategy, mockNoisyMovementFactory);
 
         // when
         String status = particleFilter.getStatus();
 
         // then
         // We only really check that it doesn't blow up, and returns something resembling info about a particle filter
-
         assertThat(status, containsString("distributionAlongXAxis"));
         assertThat(status, containsString("distributionAlongYAxis"));
         assertThat(status, containsString("distributionOfOrientations"));
         assertThat(status, containsString("particles"));
+        assertThat(status, containsString("position"));
     }
 
     private Matcher<WeightedObject<RobotModel>> weightedObjectWithRobotModel(RobotModel robotModel) {
