@@ -15,6 +15,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import math.geom2d.Point2D;
 import za.co.pietermuller.playground.destructo.AngleDistribution;
+import za.co.pietermuller.playground.destructo.CustomSerializers;
 import za.co.pietermuller.playground.destructo.Gaussian;
 import za.co.pietermuller.playground.destructo.Movement;
 import za.co.pietermuller.playground.destructo.Rotation;
@@ -31,7 +32,6 @@ public class ParticleFilter implements StatusServable {
     private final NoisyMovementFactory noisyMovementFactory;
 
     private Optional<ObjectMapper> objectMapper;
-
 
     @JsonProperty("particles")
     private List<RobotModel> particles;
