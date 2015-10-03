@@ -72,6 +72,7 @@ public class WorldModel implements StatusServable {
         return outerBoundary.isInside(point2D);
     }
 
+    @JsonProperty("boundingBox")
     public Box2D getBoundingBox() {
         return outerBoundary.boundingBox();
     }
@@ -79,7 +80,6 @@ public class WorldModel implements StatusServable {
     public static Builder builder() {
         return new Builder();
     }
-
 
     private synchronized ObjectMapper getObjectMapper() {
         if (objectMapper.isPresent()) {
@@ -91,6 +91,7 @@ public class WorldModel implements StatusServable {
             SimpleModule serializationModule = new SimpleModule("DestructoSerialize");
             serializationModule.addSerializer(new CustomSerializers.Point2DSerializer(Point2D.class));
             serializationModule.addSerializer(new CustomSerializers.LineSegment2DSerializer(LineSegment2D.class));
+            serializationModule.addSerializer(new CustomSerializers.Box2DSerializer(Box2D.class));
             om.registerModule(serializationModule);
             this.objectMapper = Optional.of(om);
             return objectMapper.get();

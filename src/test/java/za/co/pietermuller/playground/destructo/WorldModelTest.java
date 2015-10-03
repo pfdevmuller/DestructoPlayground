@@ -104,7 +104,6 @@ public class WorldModelTest {
         assertThat(boundingBox.getMinY(), is(equalTo(-30.0)));
     }
 
-
     @Test
     public void testGetStatus() throws Exception {
         // given
@@ -116,8 +115,11 @@ public class WorldModelTest {
         // then
         // We only really check that it doesn't blow up, and returns something resembling info about a world model
         assertThat(status, containsString("outerBoundary"));
-        assertThat(status, containsString("Point1"));
-        assertThat(status, containsString("Point2"));
+        assertThat(status, containsString("point1"));
+        assertThat(status, containsString("point2"));
+        assertThat(status, containsString("boundingBox"));
+        assertThat(status, containsString("minX"));
+        assertThat(status, containsString("maxY"));
     }
 
     private WorldModel getSimpleSquareWorld() {
