@@ -41,6 +41,10 @@ public class RobotModelTest {
         public MovementNoiseModel getRotationMovementNoiseModel() {
             throw new UnsupportedOperationException("getRotationMovementNoiseModel not implemented!");
         }
+
+        public double getUnityDistanceMeasurementNoise() {
+            throw new UnsupportedOperationException("getUnityDistanceMeasurementNoise not implemented!");
+        }
     };
 
     @Mock

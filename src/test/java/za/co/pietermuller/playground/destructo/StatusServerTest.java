@@ -11,7 +11,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 public class StatusServerTest {
 
@@ -30,13 +31,13 @@ public class StatusServerTest {
     @Test
     public void testServerReturnsSomething() throws Exception {
         // given
-        URL url = new URL("http", "localhost", 8080, "/testing/status/server");
+        URL url = new URL("http", "localhost", 8080, "/status");
 
         // when
         String responseContent = getUri(url);
 
         // then
-        assertThat(responseContent, containsString("Destructo Status Server"));
+        assertThat(responseContent, is(equalTo("{ }")));
     }
 
     private String getUri(URL url) throws IOException {

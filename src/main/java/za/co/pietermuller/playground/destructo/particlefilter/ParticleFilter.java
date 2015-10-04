@@ -32,13 +32,15 @@ public class ParticleFilter implements StatusServable {
     private final NoisyMovementFactory noisyMovementFactory;
 
     private Optional<ObjectMapper> objectMapper;
+    private int movementUpdateCount;
+    private int measurementUpdateCount;
 
     @JsonProperty("particles")
     private List<RobotModel> particles;
 
     public ParticleFilter(RandomParticleSource randomParticleSource,
                           int numberOfSamples,
-                          SamplingStrategy samplingStrategy,
+                          SamplingStrategy<RobotModel> samplingStrategy,
                           NoisyMovementFactory noisyMovementFactory) {
         checkNotNull(randomParticleSource, "randomParticleSource is null!");
         this.numberOfSamples = numberOfSamples;
@@ -61,6 +63,7 @@ public class ParticleFilter implements StatusServable {
         }));
 
         System.out.println("    Movement Update Done. Particles left: " + particles.size());
+        movementUpdateCount++;
         // TODO: If particles were filtered out, replace them, either with new ones or random samples from the source set
         // (otherwise you'll run out of particles!)
     }
@@ -72,10 +75,11 @@ public class ParticleFilter implements StatusServable {
             weightsBuilder.add(new WeightedObject<RobotModel>(particle, weight));
         }
         ImmutableList.Builder<RobotModel> listBuilder = new ImmutableList.Builder<RobotModel>();
-        for (RobotModel particle: samplingStrategy.sampleFrom(weightsBuilder.build())) {
+        for (RobotModel particle : samplingStrategy.sampleFrom(weightsBuilder.build())) {
             listBuilder.add(RobotModel.copyOf(particle));
         }
         particles = listBuilder.build();
+        measurementUpdateCount++;
     }
 
     @JsonProperty("distributionAlongXAxis")
@@ -114,6 +118,16 @@ public class ParticleFilter implements StatusServable {
     @JsonProperty("numberOfParticles")
     public int getNumberOfParticles() {
         return particles.size();
+    }
+
+    @JsonProperty("movementUpdateCount")
+    public int getMovementUpdateCount() {
+        return movementUpdateCount;
+    }
+
+    @JsonProperty("measurementUpdateCount")
+    public int getMeasurementUpdateCount() {
+        return measurementUpdateCount;
     }
 
     private synchronized ObjectMapper getObjectMapper() {
