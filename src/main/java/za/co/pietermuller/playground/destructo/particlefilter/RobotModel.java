@@ -11,6 +11,7 @@ import za.co.pietermuller.playground.destructo.RobotDescription;
 import za.co.pietermuller.playground.destructo.Rotation;
 import za.co.pietermuller.playground.destructo.WorldModel;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class RobotModel {
@@ -78,17 +79,26 @@ public class RobotModel {
     public double getMeasurementProbability(Measurement measurement) {
         // TODO this assumes the sensor is looking along the same orientation as the robot
 
-        LineSegment2D lineToWall = worldModel.getLineToNearestWall(position, orientation);
-        double expectedMeasurement = lineToWall.length();
+        double measurementProbability = 0;
 
-        double actualMeasurement =
-                measurement.getDistanceToWall() + robotDescription.getDistanceFromPositionToDistanceSensor();
+        if (measurement.isInfinite()) {
+            measurementProbability = 0;
+        } else {
 
-        // How likely is the actual measurement, on a normal distribution based on
-        // the expected measurement and noise?
-        double measurementProbability =
-                new Gaussian(expectedMeasurement, measurement.getDistanceToWallNoise())
-                        .value(actualMeasurement);
+            LineSegment2D lineToWall = worldModel.getLineToNearestWall(position, orientation);
+            double expectedMeasurement = lineToWall.length();
+
+            double actualMeasurement =
+                    measurement.getDistanceToWall() + robotDescription.getDistanceFromPositionToDistanceSensor();
+
+            // How likely is the actual measurement, on a normal distribution based on
+            // the expected measurement and noise?
+            measurementProbability =
+                    new Gaussian(expectedMeasurement, measurement.getDistanceToWallNoise())
+                            .value(actualMeasurement);
+        }
+
+        checkArgument(!Double.isNaN(measurementProbability), "Measurement Probability must be a real number.");
 
         logger.debug("Calculated measurement probability of {} for measurement {},"
                      + "given a robot at position {}, orientation {}.",

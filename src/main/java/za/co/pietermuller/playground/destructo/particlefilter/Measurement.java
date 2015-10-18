@@ -21,6 +21,13 @@ public class Measurement {
         return distanceToWallNoise;
     }
 
+    /**
+     * Returns true if any part of this measurement is infinite.
+     */
+    public boolean isInfinite() {
+        return Double.isInfinite(distanceToWall) || Double.isInfinite(distanceToWallNoise);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) { return true; }
