@@ -4,6 +4,8 @@ import com.google.common.base.Throwables;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import math.geom2d.Point2D;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import za.co.pietermuller.playground.destructo.particlefilter.NoisyMovementFactory;
 import za.co.pietermuller.playground.destructo.particlefilter.ParticleFilter;
 import za.co.pietermuller.playground.destructo.particlefilter.RandomParticleSource;
@@ -14,7 +16,11 @@ import za.co.pietermuller.playground.destructo.particlefilter.SimpleRandomSampli
 import java.util.Random;
 
 public class Main {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
+        LOGGER.info("Destructo starting up.");
         StatusServer statusServer = null;
 
         try {
@@ -45,18 +51,20 @@ public class Main {
             statusServer.addToServables("worldModel", worldModel);
             statusServer.addToOrderListeners(orchestrator);
 
+            LOGGER.info("Starting up server.");
             statusServer.start();
 
             orchestrator.run(); // Should block until exception is thrown
         } catch (Exception e) {
-            System.out.println("Crashing out with: " + e);
-            LCD.drawString("Crashing out with: " + e, 0, 0);
+            LOGGER.error("Crashed out with: {}", e.getMessage(), e);
+            LCD.clear();
+            LCD.drawString("Crashed out with: " + e.getMessage(), 0, 0);
             Sound.beep();
             Sound.beep();
             Sound.beep();
             Sound.beep();
             try {
-                Thread.sleep(60000);
+                Thread.sleep(30000);
             } catch (InterruptedException e1) {
                 throw Throwables.propagate(e1);
             }
@@ -66,9 +74,7 @@ public class Main {
                 statusServer.stop();
             }
         }
-
     }
-
 
     private static WorldModel getTestWorldModel() {
         return WorldModel.builder()

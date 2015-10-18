@@ -5,6 +5,7 @@ import com.google.common.base.MoreObjects;
 import math.geom2d.Point2D;
 import math.geom2d.line.LineSegment2D;
 import org.apache.commons.math3.analysis.function.Gaussian;
+import org.slf4j.Logger;
 import za.co.pietermuller.playground.destructo.Movement;
 import za.co.pietermuller.playground.destructo.RobotDescription;
 import za.co.pietermuller.playground.destructo.Rotation;
@@ -13,6 +14,8 @@ import za.co.pietermuller.playground.destructo.WorldModel;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class RobotModel {
+
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     private final RobotDescription robotDescription;
     private Point2D position; // mm, cartesian
@@ -46,6 +49,9 @@ public class RobotModel {
      * @param movement
      */
     public void move(Movement movement) {
+        logger.debug("Moving robot by {}. Current position: {}. Current orientation: {}.",
+                movement, getPosition(), getOrientation());
+
         // update position
         double x = position.x() + (Math.cos(orientation.radians()) * movement.getDistance());
         double y = position.y() + (Math.sin(orientation.radians()) * movement.getDistance());
@@ -54,6 +60,9 @@ public class RobotModel {
 
         // update rotation:
         orientation = orientation.add(movement.getRotation()).normalize();
+
+        logger.debug("Position after move: {}. Orientation after move: {}.",
+                movement, getPosition(), getOrientation());
     }
 
     public boolean isInsideWorldBorder() {
@@ -80,6 +89,10 @@ public class RobotModel {
         double measurementProbability =
                 new Gaussian(expectedMeasurement, measurement.getDistanceToWallNoise())
                         .value(actualMeasurement);
+
+        logger.debug("Calculated measurement probability of {} for measurement {},"
+                     + "given a robot at position {}, orientation {}.",
+                measurementProbability, measurement, getPosition(), getOrientation());
 
         return measurementProbability;
     }
