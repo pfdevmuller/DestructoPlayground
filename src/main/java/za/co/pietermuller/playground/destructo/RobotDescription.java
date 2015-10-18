@@ -22,4 +22,9 @@ public interface RobotDescription {
      * Returns the standard deviation on a distance measurement of 1 meter.;
      */
     double getUnityDistanceMeasurementNoise();
+
+    /**
+     * Noise when the measurement is zero.
+     */
+    double getMinimumDistanceMeasurementNoise();
 }

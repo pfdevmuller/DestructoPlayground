@@ -62,10 +62,14 @@ public class DestructoController {
             total += sample;
         }
         double distance = total / samplesCount;
+        double noise = Math.max(
+                distance * robotDescription.getUnityDistanceMeasurementNoise(),
+                robotDescription.getMinimumDistanceMeasurementNoise());
+
         Measurement measurement =
                 new Measurement(
                         distance,
-                        distance * robotDescription.getUnityDistanceMeasurementNoise());
+                        noise);
         logger.info("Took a distance measurement: {}", measurement);
         return measurement;
     }

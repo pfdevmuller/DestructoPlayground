@@ -93,8 +93,14 @@ public class RobotModel {
 
             // How likely is the actual measurement, on a normal distribution based on
             // the expected measurement and noise?
+
+            // If the noise is zero, the Gaussian fails, so we artificially limit it here:
+            double noise = Math.max(
+                    measurement.getDistanceToWallNoise(),
+                    0.001);
+
             measurementProbability =
-                    new Gaussian(expectedMeasurement, measurement.getDistanceToWallNoise())
+                    new Gaussian(expectedMeasurement, noise)
                             .value(actualMeasurement);
         }
 

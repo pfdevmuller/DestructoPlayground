@@ -45,6 +45,10 @@ public class RobotModelTest {
         public double getUnityDistanceMeasurementNoise() {
             throw new UnsupportedOperationException("getUnityDistanceMeasurementNoise not implemented!");
         }
+
+        public double getMinimumDistanceMeasurementNoise() {
+            throw new UnsupportedOperationException("getMinimumDistanceMeasurementNoise not implemented!");
+        }
     };
 
     @Mock
