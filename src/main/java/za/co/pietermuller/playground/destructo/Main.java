@@ -38,7 +38,7 @@ public class Main {
             Random randomGenerator = new Random();
             RandomParticleSource randomParticleSource =
                     new RandomParticleSource(robotDescription, worldModel, randomGenerator);
-            int numberOfSamples = 100;
+            int numberOfSamples = 2500;
             SamplingStrategy<RobotModel> samplingStrategy = new SimpleRandomSamplingStrategy<RobotModel>(randomGenerator);
             NoisyMovementFactory noisyMovementFactory = new NoisyMovementFactory(robotDescription, randomGenerator);
             ParticleFilter particleFilter =
@@ -79,9 +79,11 @@ public class Main {
     private static WorldModel getTestWorldModel() {
         return WorldModel.builder()
                 .withBoundaryPoint(new Point2D(0, 0))
-                .withBoundaryPoint(new Point2D(100, 0))
-                .withBoundaryPoint(new Point2D(100, 100))
-                .withBoundaryPoint(new Point2D(0, 100))
+                .withBoundaryPoint(new Point2D(0.90, 0))
+                .withBoundaryPoint(new Point2D(0.90, 0.15))
+                .withBoundaryPoint(new Point2D(1.03, 0.15))
+                .withBoundaryPoint(new Point2D(1.03, 0.4))
+                .withBoundaryPoint(new Point2D(0, 0.4))
                 .build();
     }
 }
