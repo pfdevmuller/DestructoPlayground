@@ -1,8 +1,6 @@
 package za.co.pietermuller.playground.destructo;
 
 import com.google.common.base.Throwables;
-import lejos.hardware.Sound;
-import lejos.hardware.lcd.LCD;
 import math.geom2d.Point2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,21 +22,15 @@ public class Main {
         StatusServer statusServer = null;
 
         try {
-            LCD.clear();
-            LCD.drawString("Starting Destructo Controller!", 0, 5);
-            Sound.beep();
-            Sound.beep();
-            Sound.beep();
-            LCD.clear();
-
             RobotDescription robotDescription = new DestructoDescription();
-            DestructoController controller = new DestructoController(robotDescription);
+            //DestructoController controller = new OnboardDestructoController(robotDescription);
+            DestructoController controller = new RmiDestructoController(robotDescription, "192.168.1.109");
 
             WorldModel worldModel = getTestWorldModel();
             Random randomGenerator = new Random();
             RandomParticleSource randomParticleSource =
                     new RandomParticleSource(robotDescription, worldModel, randomGenerator);
-            int numberOfSamples = 2500;
+            int numberOfSamples = 500;
             SamplingStrategy<RobotModel> samplingStrategy = new SimpleRandomSamplingStrategy<RobotModel>(randomGenerator);
             NoisyMovementFactory noisyMovementFactory = new NoisyMovementFactory(robotDescription, randomGenerator);
             ParticleFilter particleFilter =
@@ -57,19 +49,12 @@ public class Main {
             orchestrator.run(); // Should block until exception is thrown
         } catch (Exception e) {
             LOGGER.error("Crashed out with: {}", e.getMessage(), e);
-            LCD.clear();
-            LCD.drawString("Crashed out with: " + e.getMessage(), 0, 0);
-            Sound.beep();
-            Sound.beep();
-            Sound.beep();
-            Sound.beep();
             try {
                 Thread.sleep(30000);
             } catch (InterruptedException e1) {
                 throw Throwables.propagate(e1);
             }
-        }
-        finally {
+        } finally {
             if (statusServer != null) {
                 statusServer.stop();
             }
@@ -78,12 +63,12 @@ public class Main {
 
     private static WorldModel getTestWorldModel() {
         return WorldModel.builder()
-                .withBoundaryPoint(new Point2D(0, 0))
-                .withBoundaryPoint(new Point2D(0.90, 0))
-                .withBoundaryPoint(new Point2D(0.90, 0.15))
-                .withBoundaryPoint(new Point2D(1.03, 0.15))
-                .withBoundaryPoint(new Point2D(1.03, 0.4))
-                .withBoundaryPoint(new Point2D(0, 0.4))
+                .withBoundaryPoint(new Point2D(0.15, 0))
+                .withBoundaryPoint(new Point2D(0.95, 0))
+                .withBoundaryPoint(new Point2D(0.95, 0.53))
+                .withBoundaryPoint(new Point2D(0, 0.53))
+                .withBoundaryPoint(new Point2D(0, 0.12))
+                .withBoundaryPoint(new Point2D(0.15, 0.12))
                 .build();
     }
 }

@@ -1,6 +1,5 @@
 package za.co.pietermuller.playground.destructo;
 
-import lejos.hardware.Sound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import za.co.pietermuller.playground.destructo.particlefilter.Measurement;
@@ -32,7 +31,6 @@ public class DestructoOrchestrator implements OrderListener {
         while (true) {
             logger.info("Waiting for order...");
             Movement order = orderQueue.take(); // Will block until order is available
-            Sound.beep();
 
             logger.info("Received order: {}", order);
 
