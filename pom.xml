@@ -53,6 +53,20 @@
           </execution>
         </executions>
       </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.2.1</version>
+          <configuration>
+            <executable>java</executable>
+
+            <arguments>
+              <argument>-classpath</argument>
+              <argument>/Users/mullerp/dev/Mindstorms/DestructoPlayground/DestructoPlayground/target/destructo-playground-1.0-SNAPSHOT-jar-with-dependencies.jar;/Users/mullerp/dev/Mindstorms/lejos/lejos_repo/lejos-ev3/ev3classes/lib/jna-3.2.7.jar</argument>
+              <argument>za.co.pietermuller.playground.destructo.Main</argument>
+            </arguments>
+          </configuration>
+        </plugin>
     </plugins>
   </build>
 
