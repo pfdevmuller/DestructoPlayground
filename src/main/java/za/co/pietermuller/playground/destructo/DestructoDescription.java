@@ -14,6 +14,10 @@ public class DestructoDescription implements RobotDescription {
     private final MovementNoiseModel rotationNoiseModel =
             new MovementNoiseModel(0, 0.01, 0, 0.1);
 
+    // TODO these values are made up
+    private final double unityDistanceMeasurementNoise =
+            0.1;
+
     public double getDistanceFromPositionToDistanceSensor() {
         return 0.140;
     }
@@ -34,5 +38,8 @@ public class DestructoDescription implements RobotDescription {
         return rotationNoiseModel;
     }
 
+    public double getUnityDistanceMeasurementNoise() {
+        return unityDistanceMeasurementNoise;
+    }
 
 }

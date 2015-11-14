@@ -35,7 +35,7 @@ public class RandomParticleSourceTest {
         WorldModel worldModel = getSimpleLWorld(); // 100 x 100, with 50x50 in top right missing
         Random mockRandomGenerator = mock(Random.class);
         RandomParticleSource randomParticleSource =
-                new RandomParticleSource(robotDescription, worldModel, mockRandomGenerator, 2);
+                new RandomParticleSource(robotDescription, worldModel, mockRandomGenerator);
 
         when(mockRandomGenerator.nextDouble())
                 .thenReturn(0.8) // particle 1 x
@@ -49,7 +49,7 @@ public class RandomParticleSourceTest {
                 .thenThrow(new IllegalStateException("Should not be called this many times."));
 
         // when
-        List<RobotModel> particles = randomParticleSource.getRandomParticles();
+        List<RobotModel> particles = randomParticleSource.getRandomParticles(2);
 
         // then
         assertThat(particles, contains(

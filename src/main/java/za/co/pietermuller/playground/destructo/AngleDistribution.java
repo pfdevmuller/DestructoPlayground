@@ -1,5 +1,6 @@
 package za.co.pietermuller.playground.destructo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import math.geom2d.Vector2D;
@@ -18,10 +19,12 @@ public class AngleDistribution {
         this.confidence = confidence;
     }
 
+    @JsonProperty("mean")
     public Rotation getMean() {
         return mean;
     }
 
+    @JsonProperty("confidence")
     public double getConfidence() {
         return confidence;
     }

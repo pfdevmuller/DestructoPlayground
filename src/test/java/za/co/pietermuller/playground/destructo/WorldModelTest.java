@@ -9,6 +9,7 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static za.co.pietermuller.playground.destructo.Rotation.degrees;
@@ -101,6 +102,24 @@ public class WorldModelTest {
         assertThat(boundingBox.getMinX(), is(equalTo(-40.0)));
         assertThat(boundingBox.getMaxY(), is(equalTo(60.0)));
         assertThat(boundingBox.getMinY(), is(equalTo(-30.0)));
+    }
+
+    @Test
+    public void testGetStatus() throws Exception {
+        // given
+        WorldModel worldModel = getSimpleSquareWorld();
+
+        // when
+        String status = worldModel.getStatus();
+
+        // then
+        // We only really check that it doesn't blow up, and returns something resembling info about a world model
+        assertThat(status, containsString("outerBoundary"));
+        assertThat(status, containsString("point1"));
+        assertThat(status, containsString("point2"));
+        assertThat(status, containsString("boundingBox"));
+        assertThat(status, containsString("minX"));
+        assertThat(status, containsString("maxY"));
     }
 
     private WorldModel getSimpleSquareWorld() {

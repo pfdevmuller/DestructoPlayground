@@ -1,5 +1,13 @@
 package za.co.pietermuller.playground.destructo;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.base.Optional;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
@@ -13,12 +21,16 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class WorldModel {
+public class WorldModel implements StatusServable {
 
+    private Optional<ObjectMapper> objectMapper;
+
+    @JsonProperty("outerBoundary")
     private final BoundaryPolyCurve2D<? extends ContinuousOrientedCurve2D> outerBoundary;
 
     private WorldModel(BoundaryPolyCurve2D<? extends ContinuousOrientedCurve2D> outerBoundary) {
         this.outerBoundary = checkNotNull(outerBoundary, "outerBoundary is null!");
+        this.objectMapper = Optional.absent();
     }
 
     /**
@@ -60,12 +72,38 @@ public class WorldModel {
         return outerBoundary.isInside(point2D);
     }
 
+    @JsonProperty("boundingBox")
     public Box2D getBoundingBox() {
         return outerBoundary.boundingBox();
     }
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    private synchronized ObjectMapper getObjectMapper() {
+        if (objectMapper.isPresent()) {
+            return objectMapper.get();
+        } else {
+            ObjectMapper om = new ObjectMapper();
+            om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+            om.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PUBLIC_ONLY);
+            SimpleModule serializationModule = new SimpleModule("DestructoSerialize");
+            serializationModule.addSerializer(new CustomSerializers.Point2DSerializer(Point2D.class));
+            serializationModule.addSerializer(new CustomSerializers.LineSegment2DSerializer(LineSegment2D.class));
+            serializationModule.addSerializer(new CustomSerializers.Box2DSerializer(Box2D.class));
+            om.registerModule(serializationModule);
+            this.objectMapper = Optional.of(om);
+            return objectMapper.get();
+        }
+    }
+
+    public String getStatus() {
+        try {
+            return getObjectMapper().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     public static class Builder {

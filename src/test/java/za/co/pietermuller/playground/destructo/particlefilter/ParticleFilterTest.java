@@ -21,12 +21,14 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static za.co.pietermuller.playground.destructo.Rotation.degrees;
 import static za.co.pietermuller.playground.destructo.Rotation.radians;
 
 public class ParticleFilterTest {
@@ -58,11 +60,12 @@ public class ParticleFilterTest {
         RobotModel model2 = mock(RobotModel.class);
         RobotModel model3 = mock(RobotModel.class);
 
-        when(mockRandomParticleSource.getRandomParticles())
+        when(mockRandomParticleSource.getRandomParticles(3))
                 .thenReturn(ImmutableList.of(model1, model2, model3));
 
         ParticleFilter particleFilter = new ParticleFilter(
                 mockRandomParticleSource,
+                3,
                 mockSamplingStrategy,
                 mockNoisyMovementFactory);
 
@@ -92,11 +95,12 @@ public class ParticleFilterTest {
         RobotModel model2 = mock(RobotModel.class);
         RobotModel model3 = mock(RobotModel.class);
 
-        when(mockRandomParticleSource.getRandomParticles())
+        when(mockRandomParticleSource.getRandomParticles(3))
                 .thenReturn(ImmutableList.of(model1, model2, model3));
 
         ParticleFilter particleFilter = new ParticleFilter(
                 mockRandomParticleSource,
+                3,
                 mockSamplingStrategy,
                 mockNoisyMovementFactory);
 
@@ -138,11 +142,11 @@ public class ParticleFilterTest {
                     mockRobotDescription, new Point2D(xValues[i], yValues[i]), radians(orientations[i]), mockWorldModel));
         }
 
-        when(mockRandomParticleSource.getRandomParticles())
+        when(mockRandomParticleSource.getRandomParticles(5))
                 .thenReturn(particles);
 
         ParticleFilter particleFilter =
-                new ParticleFilter(mockRandomParticleSource, mockSamplingStrategy, mockNoisyMovementFactory);
+                new ParticleFilter(mockRandomParticleSource, 5, mockSamplingStrategy, mockNoisyMovementFactory);
 
         // when
         Gaussian xDistribution = particleFilter.getDistributionAlongXAxis();
@@ -156,6 +160,31 @@ public class ParticleFilterTest {
         assertThat(yDistribution.getSigma(), is(closeTo(16.307, 0.001)));
         assertThat(orientationDistribution.getMean().radians(), is(closeTo(5.931386434064327, 0.001)));
         assertThat(orientationDistribution.getConfidence(), is(closeTo(0.4374151485439101, 0.001)));
+    }
+
+    @Test
+    public void testGetStatus() throws Exception {
+        // given
+        RandomParticleSource mockParticleSource = mock(RandomParticleSource.class);
+        when(mockParticleSource.getRandomParticles(2)).thenReturn(
+                ImmutableList.of(
+                        new RobotModel(mockRobotDescription, new Point2D(1, 2), degrees(45), mockWorldModel),
+                        new RobotModel(mockRobotDescription, new Point2D(3, 4), degrees(135), mockWorldModel))
+        );
+
+        ParticleFilter particleFilter =
+                new ParticleFilter(mockParticleSource, 2, mockSamplingStrategy, mockNoisyMovementFactory);
+
+        // when
+        String status = particleFilter.getStatus();
+
+        // then
+        // We only really check that it doesn't blow up, and returns something resembling info about a particle filter
+        assertThat(status, containsString("distributionAlongXAxis"));
+        assertThat(status, containsString("distributionAlongYAxis"));
+        assertThat(status, containsString("distributionOfOrientations"));
+        assertThat(status, containsString("particles"));
+        assertThat(status, containsString("position"));
     }
 
     private Matcher<WeightedObject<RobotModel>> weightedObjectWithRobotModel(RobotModel robotModel) {

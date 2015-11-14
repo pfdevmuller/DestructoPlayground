@@ -24,20 +24,20 @@ public class ParticleFilterIntegrationTest {
     Random random = new Random();
 
     RandomParticleSource randomParticleSource =
-            new RandomParticleSource(destructoDescription, worldModel, random, 1000);
+            new RandomParticleSource(destructoDescription, worldModel, random);
 
     SamplingStrategy<RobotModel> samplingStrategy = new SimpleRandomSamplingStrategy<RobotModel>(random);
 
     NoisyMovementFactory noisyMovementFactory = new NoisyMovementFactory(destructoDescription, random);
 
     @Test
-    public void testFilterConvergesOne() throws Exception {
+    public void testFilterConverges() throws Exception {
         // given
         RobotModel actualRobot = new RobotModel(
                 destructoDescription, new Point2D(90, 10), degrees(0), worldModel);
 
         ParticleFilter particleFilter =
-                new ParticleFilter(randomParticleSource, samplingStrategy, noisyMovementFactory);
+                new ParticleFilter(randomParticleSource, 1000, samplingStrategy, noisyMovementFactory);
 
         Movement[] movements = new Movement[]{
                 new Movement(0, degrees(-45)),
