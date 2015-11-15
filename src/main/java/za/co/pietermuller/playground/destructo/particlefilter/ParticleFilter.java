@@ -31,6 +31,7 @@ public class ParticleFilter implements StatusServable {
     private final Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     private final int numberOfSamples;
+    private final RandomParticleSource randomParticleSource;
     private final SamplingStrategy<RobotModel> samplingStrategy;
     private final NoisyMovementFactory noisyMovementFactory;
 
@@ -47,6 +48,7 @@ public class ParticleFilter implements StatusServable {
                           NoisyMovementFactory noisyMovementFactory) {
         checkNotNull(randomParticleSource, "randomParticleSource is null!");
         this.numberOfSamples = numberOfSamples;
+        this.randomParticleSource = checkNotNull(randomParticleSource, "randomParticleSource is null!");
         this.particles = randomParticleSource.getRandomParticles(numberOfSamples);
         this.samplingStrategy = checkNotNull(samplingStrategy, "samplingStrategy is null!");
         this.noisyMovementFactory = checkNotNull(noisyMovementFactory, "noisyMovementFactory is null!");
@@ -67,11 +69,18 @@ public class ParticleFilter implements StatusServable {
             }
         }));
 
-        logger.debug("Movement Update Done. Particles left: {}", particles.size());
+        logger.info("Movement Update Done. Particles left: {}", particles.size());
+
+        int lostParticles = numberOfSamples - particles.size();
+        if (lostParticles > 0) {
+            logger.info("Replacing {} lost particles.", lostParticles);
+            particles = ImmutableList.<RobotModel>builder()
+                    .addAll(particles)
+                    .addAll(randomParticleSource.getRandomParticles(lostParticles))
+                    .build();
+        }
 
         movementUpdateCount++;
-        // TODO: If particles were filtered out, replace them, either with new ones or random samples from the source set
-        // (otherwise you'll run out of particles!)
     }
 
     public void measurementUpdate(Measurement measurement) {

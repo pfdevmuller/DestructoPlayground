@@ -35,7 +35,7 @@ public class RandomParticleSource {
         ySpan = worldBoundary.getMaxY() - worldBoundary.getMinY();
     }
 
-    private RobotModel getRandomParticle() {
+    public RobotModel getRandomParticle() {
         Point2D point = null;
         do {
             double x = worldBoundary.getMinX() + randomGenerator.nextDouble() * xSpan;
