@@ -24,7 +24,7 @@ public class RmiDestructoController implements DestructoController {
     private final RobotDescription robotDescription;
     private final RMIRegulatedMotor leftDriverWheel;
     private final RMIRegulatedMotor rightDriverWheel;
-    private final RMISampleProvider irSensor;
+    private final RMISampleProvider nxtUltrasonicSensor;
 
     public RmiDestructoController(RobotDescription robotDescription, String ipAddress) {
         this.robotDescription = robotDescription;
@@ -35,7 +35,8 @@ public class RmiDestructoController implements DestructoController {
             leftDriverWheel.setSpeed(180);
             rightDriverWheel = remoteEV3.createRegulatedMotor("D", 'L');
             rightDriverWheel.setSpeed(180);
-            irSensor = remoteEV3.createSampleProvider("S1", "lejos.hardware.sensor.EV3IRSensor", "Distance");
+            nxtUltrasonicSensor = remoteEV3.createSampleProvider("S1",
+                    "lejos.hardware.sensor.NXTUltrasonicSensor", "Distance");
         } catch (RemoteException e) {
             throw Throwables.propagate(e);
         } catch (MalformedURLException e) {
@@ -55,7 +56,7 @@ public class RmiDestructoController implements DestructoController {
         List<Double> samples = new ArrayList<Double>(samplesCount);
         try {
             for (int i = 0; i < samplesCount; i++) {
-                float[] distanceSample = irSensor.fetchSample();
+                float[] distanceSample = nxtUltrasonicSensor.fetchSample();
                 samples.add((double) distanceSample[0]);
             }
         } catch (RemoteException e) {
