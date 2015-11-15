@@ -40,7 +40,10 @@ public class StatusServer extends NanoHTTPD {
         } else if (method == Method.POST) {
             if (uri.endsWith("order")) {
                 response = processOrder(session);
+            } else if (uri.endsWith("quit")) {
+                throw new RuntimeException("Quiting");
             }
+
         }
 
         response.addHeader("Access-Control-Allow-Origin", "*");

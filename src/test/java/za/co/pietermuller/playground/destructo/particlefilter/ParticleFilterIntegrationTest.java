@@ -109,6 +109,68 @@ public class ParticleFilterIntegrationTest {
         assertThat("Expected small error in orientation estimate", orientationError, lessThan(5.0));
     }
 
+    @Test
+    public void testFilterCanHandleInfiniteMeasurements() throws Exception {
+        // given
+        RobotModel actualRobot = new RobotModel(
+                destructoDescription, new Point2D(90, 10), degrees(0), worldModel);
+
+        ParticleFilter particleFilter =
+                new ParticleFilter(randomParticleSource, 10, samplingStrategy, noisyMovementFactory);
+
+        Movement[] movements = new Movement[]{
+                new Movement(0, degrees(-45)),
+        };
+
+        Measurement[] measurements = new Measurement[]{
+                new Measurement(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY),
+        };
+
+        assertThat("movements and measurements must be equal in number",
+                movements.length, is(equalTo(measurements.length)));
+
+        // when
+        for (int i = 0; i < movements.length; i++) {
+            actualRobot.move(movements[i]);
+            particleFilter.movementUpdate(movements[i]);
+            particleFilter.measurementUpdate(measurements[i]);
+        }
+
+        // then
+        // Reach this point without blowing up
+    }
+
+    @Test
+    public void testFilterCanHandleZeroMeasurements() throws Exception {
+        // given
+        RobotModel actualRobot = new RobotModel(
+                destructoDescription, new Point2D(90, 10), degrees(0), worldModel);
+
+        ParticleFilter particleFilter =
+                new ParticleFilter(randomParticleSource, 10, samplingStrategy, noisyMovementFactory);
+
+        Movement[] movements = new Movement[]{
+                new Movement(0, degrees(-45)),
+        };
+
+        Measurement[] measurements = new Measurement[]{
+                new Measurement(0, 0),
+        };
+
+        assertThat("movements and measurements must be equal in number",
+                movements.length, is(equalTo(measurements.length)));
+
+        // when
+        for (int i = 0; i < movements.length; i++) {
+            actualRobot.move(movements[i]);
+            particleFilter.movementUpdate(movements[i]);
+            particleFilter.measurementUpdate(measurements[i]);
+        }
+
+        // then
+        // Reach this point without blowing up
+    }
+
     private WorldModel getFlatLShapedWorld() {
         return WorldModel.builder()
                 .withBoundaryPoint(new Point2D(0, 0))

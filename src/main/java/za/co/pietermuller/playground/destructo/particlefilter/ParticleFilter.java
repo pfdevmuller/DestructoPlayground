@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import math.geom2d.Point2D;
+import org.slf4j.Logger;
 import za.co.pietermuller.playground.destructo.AngleDistribution;
 import za.co.pietermuller.playground.destructo.CustomSerializers;
 import za.co.pietermuller.playground.destructo.Gaussian;
@@ -27,7 +28,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ParticleFilter implements StatusServable {
 
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
+
     private final int numberOfSamples;
+    private final RandomParticleSource randomParticleSource;
     private final SamplingStrategy<RobotModel> samplingStrategy;
     private final NoisyMovementFactory noisyMovementFactory;
 
@@ -44,13 +48,16 @@ public class ParticleFilter implements StatusServable {
                           NoisyMovementFactory noisyMovementFactory) {
         checkNotNull(randomParticleSource, "randomParticleSource is null!");
         this.numberOfSamples = numberOfSamples;
+        this.randomParticleSource = checkNotNull(randomParticleSource, "randomParticleSource is null!");
         this.particles = randomParticleSource.getRandomParticles(numberOfSamples);
         this.samplingStrategy = checkNotNull(samplingStrategy, "samplingStrategy is null!");
         this.noisyMovementFactory = checkNotNull(noisyMovementFactory, "noisyMovementFactory is null!");
         this.objectMapper = Optional.absent();
+        logger.info("Created a ParticleFilter!");
     }
 
     public void movementUpdate(Movement noiselessMovement) {
+        logger.info("Processing movement update: {}", noiselessMovement);
         for (RobotModel robotModel : particles) {
             Movement noisyMovement = noisyMovementFactory.createNoisyMovement(noiselessMovement);
             robotModel.move(noisyMovement);
@@ -62,13 +69,22 @@ public class ParticleFilter implements StatusServable {
             }
         }));
 
-        System.out.println("    Movement Update Done. Particles left: " + particles.size());
+        logger.info("Movement Update Done. Particles left: {}", particles.size());
+
+        int lostParticles = numberOfSamples - particles.size();
+        if (lostParticles > 0) {
+            logger.info("Replacing {} lost particles.", lostParticles);
+            particles = ImmutableList.<RobotModel>builder()
+                    .addAll(particles)
+                    .addAll(randomParticleSource.getRandomParticles(lostParticles))
+                    .build();
+        }
+
         movementUpdateCount++;
-        // TODO: If particles were filtered out, replace them, either with new ones or random samples from the source set
-        // (otherwise you'll run out of particles!)
     }
 
     public void measurementUpdate(Measurement measurement) {
+        logger.info("Processing measurement update: {}", measurement);
         ImmutableList.Builder<WeightedObject<RobotModel>> weightsBuilder = ImmutableList.builder();
         for (RobotModel particle : particles) {
             double weight = particle.getMeasurementProbability(measurement);

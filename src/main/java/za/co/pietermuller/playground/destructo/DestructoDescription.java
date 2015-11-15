@@ -18,6 +18,10 @@ public class DestructoDescription implements RobotDescription {
     private final double unityDistanceMeasurementNoise =
             0.1;
 
+    // TODO these values are made up
+    private final double minimumDistanceMeasurementNoise =
+            0.01; // 1 cm
+
     public double getDistanceFromPositionToDistanceSensor() {
         return 0.140;
     }
@@ -40,6 +44,10 @@ public class DestructoDescription implements RobotDescription {
 
     public double getUnityDistanceMeasurementNoise() {
         return unityDistanceMeasurementNoise;
+    }
+
+    public double getMinimumDistanceMeasurementNoise() {
+        return minimumDistanceMeasurementNoise;
     }
 
 }
