@@ -81,6 +81,11 @@ public class WorldModel implements StatusServable {
         return new Builder();
     }
 
+    public static GridBasedBuilder gridBasedBuilder(double gridSize) {
+        return new GridBasedBuilder(gridSize);
+    }
+
+
     private synchronized ObjectMapper getObjectMapper() {
         if (objectMapper.isPresent()) {
             return objectMapper.get();
@@ -108,8 +113,8 @@ public class WorldModel implements StatusServable {
 
     public static class Builder {
         private BoundaryPolyCurve2D<ContinuousOrientedCurve2D> outerBoundary;
-        private Point2D firstPoint;
-        private Point2D lastPoint;
+        protected Point2D firstPoint;
+        protected Point2D lastPoint;
 
         private Builder() {
             this.outerBoundary = new BoundaryPolyCurve2D<ContinuousOrientedCurve2D>();
@@ -150,6 +155,47 @@ public class WorldModel implements StatusServable {
 
             checkArgument(outerBoundary.isClosed(), "outer boundary is not closed");
             return new WorldModel(outerBoundary);
+        }
+    }
+
+    public static class GridBasedBuilder extends Builder {
+        private double gridSize;
+
+        public GridBasedBuilder(double gridSize) {
+            super();
+            this.gridSize = gridSize;
+        }
+
+        private Point2D getLastPoint() {
+            if (lastPoint == null) {
+                checkArgument(firstPoint == null, "If there is no last point, there should also be no first point.");
+                firstPoint = new Point2D(0, 0);
+                lastPoint = firstPoint;
+            }
+            return lastPoint;
+        }
+
+        private GridBasedBuilder addDelta(double x, double y) {
+            Point2D previous = getLastPoint();
+            Point2D next = new Point2D(previous.x() + x, previous.y() + y);
+            withBoundaryPoint(next);
+            return this;
+        }
+
+        public GridBasedBuilder up() {
+            return addDelta(0, gridSize);
+        }
+
+        public GridBasedBuilder down() {
+            return addDelta(0, -gridSize);
+        }
+
+        public GridBasedBuilder right() {
+            return addDelta(gridSize, 0);
+        }
+
+        public GridBasedBuilder left() {
+            return addDelta(-gridSize, 0);
         }
     }
 }
