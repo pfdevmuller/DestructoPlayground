@@ -1,6 +1,5 @@
 package za.co.pietermuller.playground.destructo;
 
-import math.geom2d.Point2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import za.co.pietermuller.playground.destructo.particlefilter.NoisyMovementFactory;
@@ -51,13 +50,31 @@ public class Main {
     }
 
     private static WorldModel getTestWorldModel() {
-        return WorldModel.builder()
-                .withBoundaryPoint(new Point2D(0.15, 0))
-                .withBoundaryPoint(new Point2D(0.95, 0))
-                .withBoundaryPoint(new Point2D(0.95, 0.53))
-                .withBoundaryPoint(new Point2D(0, 0.53))
-                .withBoundaryPoint(new Point2D(0, 0.12))
-                .withBoundaryPoint(new Point2D(0.15, 0.12))
+//        return WorldModel.builder()
+//                .withBoundaryPoint(new Point2D(0.30, 0))
+//                .withBoundaryPoint(new Point2D(0.86, 0))
+//                .withBoundaryPoint(new Point2D(0.86, 0.57))
+//                .withBoundaryPoint(new Point2D(0, 0.57))
+//                .withBoundaryPoint(new Point2D(0, 0.30))
+//                .withBoundaryPoint(new Point2D(0.30, 0.30))
+//                .build();
+        return WorldModel.gridBasedBuilder(0.3)
+                .right()
+                .up()
+                .right()
+                .down()
+                .right()
+                .up()
+                .right().right()
+                .up()
+                .left().left()
+                .up()
+                .left()
+                .down()
+                .left()
+                .left()
+                .down()
                 .build();
+
     }
 }

@@ -53,7 +53,7 @@ public class RmiDestructoController implements DestructoController {
     }
 
     public Measurement senseDistance() {
-        int samplesCount = 5;
+        int samplesCount = 10;
         List<Double> samples = new ArrayList<Double>(samplesCount);
         try {
             for (int i = 0; i < samplesCount; i++) {
@@ -64,7 +64,7 @@ public class RmiDestructoController implements DestructoController {
             throw Throwables.propagate(e);
         }
 
-        logger.debug("Samples from distance measurement: [{}]", Joiner.on(", ").join(samples));
+        logger.info("Samples from distance measurement: [{}]", Joiner.on(", ").join(samples));
         double total = 0;
         for (double sample : samples) {
             total += sample;
