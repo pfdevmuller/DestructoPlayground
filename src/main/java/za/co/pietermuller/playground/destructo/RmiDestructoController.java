@@ -22,6 +22,7 @@ public class RmiDestructoController implements DestructoController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final RobotDescription robotDescription;
+    private final RemoteEV3 remoteEV3;
     private final RMIRegulatedMotor leftDriverWheel;
     private final RMIRegulatedMotor rightDriverWheel;
     private final RMISampleProvider nxtUltrasonicSensor;
@@ -30,7 +31,7 @@ public class RmiDestructoController implements DestructoController {
         this.robotDescription = robotDescription;
 
         try {
-            RemoteEV3 remoteEV3 = new RemoteEV3(ipAddress);
+            remoteEV3 = new RemoteEV3(ipAddress);
             leftDriverWheel = remoteEV3.createRegulatedMotor("A", 'L');
             leftDriverWheel.setSpeed(180);
             rightDriverWheel = remoteEV3.createRegulatedMotor("D", 'L');
@@ -115,6 +116,25 @@ public class RmiDestructoController implements DestructoController {
             rightDriverWheel.waitComplete();
         } catch (RemoteException e) {
             throw Throwables.propagate(e);
+        }
+    }
+
+    public void close() throws Exception {
+        logger.info("Closing RmiDestructoController");
+        if (remoteEV3 != null) {
+            logger.info("Closing remoteEV3");
+        }
+        if (leftDriverWheel != null) {
+            logger.info("Closing leftDriverWheel");
+            leftDriverWheel.close();
+        }
+        if (rightDriverWheel != null) {
+            logger.info("Closing rightDriverWheel");
+            rightDriverWheel.close();
+        }
+        if (nxtUltrasonicSensor != null) {
+            logger.info("Closing nxtUltrasonicSensor");
+            nxtUltrasonicSensor.close();
         }
     }
 }

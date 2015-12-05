@@ -106,4 +106,16 @@ public class OnboardDestructoController implements DestructoController {
             throw new RuntimeException("Quiting");
         }
     }
+
+    public void close() throws Exception {
+        if (leftDriverWheel != null) {
+            leftDriverWheel.close();
+        }
+        if (rightDriverWheel != null) {
+            rightDriverWheel.close();
+        }
+        if (irSensor != null) {
+            irSensor.close();
+        }
+    }
 }

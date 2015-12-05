@@ -1,6 +1,5 @@
 package za.co.pietermuller.playground.destructo;
 
-import com.google.common.base.Throwables;
 import math.geom2d.Point2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,24 +16,21 @@ public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         LOGGER.info("Destructo starting up.");
         StatusServer statusServer = null;
 
-        try {
-            RobotDescription robotDescription = new DestructoDescription();
-            //DestructoController controller = new OnboardDestructoController(robotDescription);
-            DestructoController controller = new RmiDestructoController(robotDescription, "192.168.1.109");
-
-            WorldModel worldModel = getTestWorldModel();
-            Random randomGenerator = new Random();
-            RandomParticleSource randomParticleSource =
-                    new RandomParticleSource(robotDescription, worldModel, randomGenerator);
-            int numberOfSamples = 500;
-            SamplingStrategy<RobotModel> samplingStrategy = new SimpleRandomSamplingStrategy<RobotModel>(randomGenerator);
-            NoisyMovementFactory noisyMovementFactory = new NoisyMovementFactory(robotDescription, randomGenerator);
-            ParticleFilter particleFilter =
-                    new ParticleFilter(randomParticleSource, numberOfSamples, samplingStrategy, noisyMovementFactory);
+        RobotDescription robotDescription = new DestructoDescription();
+        WorldModel worldModel = getTestWorldModel();
+        Random randomGenerator = new Random();
+        RandomParticleSource randomParticleSource =
+                new RandomParticleSource(robotDescription, worldModel, randomGenerator);
+        int numberOfSamples = 1000;
+        SamplingStrategy<RobotModel> samplingStrategy = new SimpleRandomSamplingStrategy<RobotModel>(randomGenerator);
+        NoisyMovementFactory noisyMovementFactory = new NoisyMovementFactory(robotDescription, randomGenerator);
+        ParticleFilter particleFilter =
+                new ParticleFilter(randomParticleSource, numberOfSamples, samplingStrategy, noisyMovementFactory);
+        try (DestructoController controller = new RmiDestructoController(robotDescription, "192.168.1.110")) {
 
             DestructoOrchestrator orchestrator = new DestructoOrchestrator(controller, particleFilter);
 
@@ -46,14 +42,7 @@ public class Main {
             LOGGER.info("Starting up server.");
             statusServer.start();
 
-            orchestrator.run(); // Should block until exception is thrown
-        } catch (Exception e) {
-            LOGGER.error("Crashed out with: {}", e.getMessage(), e);
-            try {
-                Thread.sleep(30000);
-            } catch (InterruptedException e1) {
-                throw Throwables.propagate(e1);
-            }
+            orchestrator.run(); // Should block until quit or exception is thrown
         } finally {
             if (statusServer != null) {
                 statusServer.stop();

@@ -41,7 +41,7 @@ public class StatusServer extends NanoHTTPD {
             if (uri.endsWith("order")) {
                 response = processOrder(session);
             } else if (uri.endsWith("quit")) {
-                throw new RuntimeException("Quiting");
+                response = processQuit(session);
             }
 
         }
@@ -105,5 +105,12 @@ public class StatusServer extends NanoHTTPD {
             return Optional.of(Rotation.radians(radians));
         }
         return Optional.absent();
+    }
+
+    private Response processQuit(IHTTPSession session) {
+        for (OrderListener orderListener : orderListeners) {
+            orderListener.quit();
+        }
+        return new NanoHTTPD.Response("{\"response\" : \"Quiting.\"}");
     }
 }

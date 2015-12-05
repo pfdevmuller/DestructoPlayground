@@ -7,6 +7,7 @@ import za.co.pietermuller.playground.destructo.particlefilter.ParticleFilter;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class DestructoOrchestrator implements OrderListener {
 
@@ -15,6 +16,8 @@ public class DestructoOrchestrator implements OrderListener {
     private final DestructoController controller;
     private final ParticleFilter particleFilter;
     private final BlockingQueue<Movement> orderQueue;
+
+    private volatile boolean isQuiting = false;
 
     public DestructoOrchestrator(DestructoController controller,
                                  ParticleFilter particleFilter) {
@@ -27,20 +30,27 @@ public class DestructoOrchestrator implements OrderListener {
         orderQueue.add(movement); // Will throw if queue is full
     }
 
+    public void quit() {
+        isQuiting = true;
+    }
+
     public void run() throws InterruptedException {
-        while (true) {
+        Movement order;
+        while (!isQuiting) {
             logger.info("Waiting for order...");
-            Movement order = orderQueue.take(); // Will block until order is available
+            order = orderQueue.poll(5, TimeUnit.SECONDS);
 
-            logger.info("Received order: {}", order);
+            if (order != null) {
+                logger.info("Received order: {}", order);
 
-            // All of the following are blocking:
-            controller.move(order); // Will block until movement is complete
-            logger.info("Received order: {}", order);
-            Measurement measurement = controller.senseDistance();
-            logger.info("Received measurement: {}", measurement);
-            particleFilter.movementUpdate(order);
-            particleFilter.measurementUpdate(measurement);
+                // All of the following are blocking:
+                controller.move(order); // Will block until movement is complete
+                logger.info("Received order: {}", order);
+                Measurement measurement = controller.senseDistance();
+                logger.info("Received measurement: {}", measurement);
+                particleFilter.movementUpdate(order);
+                particleFilter.measurementUpdate(measurement);
+            }
         }
     }
 }
