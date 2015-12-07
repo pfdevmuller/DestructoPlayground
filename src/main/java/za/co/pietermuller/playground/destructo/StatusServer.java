@@ -42,6 +42,8 @@ public class StatusServer extends NanoHTTPD {
                 response = processOrder(session);
             } else if (uri.endsWith("quit")) {
                 response = processQuit(session);
+            } else if (uri.endsWith("testready")) {
+                response =  new NanoHTTPD.Response("{\"response\" : \"yes\"}");
             }
 
         }

@@ -96,6 +96,8 @@ public class ParticleFilter implements StatusServable {
         }
         particles = listBuilder.build();
         measurementUpdateCount++;
+        logger.info("Particle Filter Result: X: {}, Y: {}, Orientation: {}"
+                , getDistributionAlongXAxis(), getDistributionAlongYAxis(), getDistributionOfOrientations());
     }
 
     @JsonProperty("distributionAlongXAxis")

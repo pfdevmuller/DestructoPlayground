@@ -28,7 +28,7 @@ public class SimpleRandomSamplingStrategy<T> implements SamplingStrategy<T> {
     }
 
     public List<T> sampleFrom(List<WeightedObject<T>> weightedObjects) {
-        double totalWeight = sumWeights(weightedObjects);
+        double totalWeight = WeightedObject.Lists.totalWeight(weightedObjects);
         if (totalWeight <= 0.0) {
             // If all the weights are zero, none of this matters. Just return the input as is.
             logger.debug("Total weight is {}, returning all input objects.", totalWeight);
@@ -38,8 +38,12 @@ public class SimpleRandomSamplingStrategy<T> implements SamplingStrategy<T> {
                 }
             });
         } else {
-            logger.debug("Total weight is {}, number of samples is {}.",
-                    totalWeight, weightedObjects.size());
+            logger.info("Sampling from {} objects. Weight stats: total: {}, average: {}, min: {}, max: {}",
+                    weightedObjects.size(),
+                    totalWeight,
+                    totalWeight / weightedObjects.size(),
+                    WeightedObject.Lists.objectWithLowestWeight(weightedObjects).getWeight(),
+                    WeightedObject.Lists.objectWithHighestWeight(weightedObjects).getWeight());
             ImmutableList.Builder<T> sampledBuilder = ImmutableList.builder();
             for (int i = 0; i < weightedObjects.size(); i++) {
                 double randomPoint = randomGenerator.nextDouble() * totalWeight;
@@ -63,11 +67,4 @@ public class SimpleRandomSamplingStrategy<T> implements SamplingStrategy<T> {
         }
     }
 
-    private double sumWeights(List<WeightedObject<T>> weightedObjects) {
-        double sum = 0;
-        for (WeightedObject<T> weightedObject : weightedObjects) {
-            sum += weightedObject.getWeight();
-        }
-        return sum;
-    }
 }
