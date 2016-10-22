@@ -1,0 +1,39 @@
+* Destructo
+** Setting up on new mac
+*** brew install maven
+*** check out destructo code from github
+*** check out rmi-exec maven plugin from github
+*** check out lejos code
+https://sourceforge.net/p/lejos/ev3/code/ci/master/tree/
+*** Find the ev3classes.jar file and install it into the local maven repo
+mvn install:install-file -Dfile=<path-to-file> -DgroupId=<group-id> \
+    -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=<packaging>
+eg:
+mvn install:install-file -Dfile=./lejos-ev3-code/ev3snapshot/lib/ev3classes.jar -DgroupId=ev3classes -DartifactId=ev3classes -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar
+*** destructo tests should now work:
+cd DestructoPlayground
+mvn test
+*** install the lejos-rmi-exec-maven-plugin
+cd lejos-rmi-exec-maven-plugin
+mvn install
+** Targets and Running
+*** To Test
+mvn test
+*** To build the jar
+mvn assembly:single
+*** To run locally
+mvn exec:exec
+(you must build the jar first, and may need to update the jar path in the plugin config (pom.xml))
+** Server features
+*** Sending commands
+# To turn: 
+curl -XPOST 'localhost:8080/order?degrees=-30'
+
+# To move:
+curl -XPOST 'localhost:8080/order?distance=0.25'
+
+# To shut down cleanly (includes closing RMI ports):
+curl -XPOST 'localhost:8080/order?quit'
+** Ideas
+*** Use Sigmoid function for sense noise distribution?
+https://en.wikipedia.org/wiki/Sigmoid_function
